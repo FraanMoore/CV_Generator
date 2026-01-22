@@ -26,7 +26,7 @@ LangMode = Literal["es", "en", "both"]
 def read_text_file(path: str) -> str:
   p = Path(path)
   if not p.exists():
-    raise FileNotFoundError(f"No existe el archivo: {p}")
+    raise FileNotFoundError(f"The file does not exist: {p}")
   return p.read_text(encoding="utf-8").strip()
 
 

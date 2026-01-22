@@ -11,7 +11,7 @@ from docx.oxml import OxmlElement
 from docx.oxml.table import CT_Tbl
 from docx.oxml.text.paragraph import CT_P
 from docx.oxml.ns import qn
-from docx.shared import Pt, RGBColor
+from docx.shared import Pt, RGBColor, Mm
 from docx.table import Table
 from docx.text.paragraph import Paragraph
 
@@ -27,6 +27,25 @@ FONT_SIZE_NAME = 22
 FONT_SIZE_TITLES = 12
 FONT_SIZE_BODY = 10
 FONT_SIZE_HYPERLINK = 9
+
+def _set_page_layout(
+    doc: DocxDocument,
+    *,
+    left_mm: float = 10,
+    right_mm: float = 15,
+    top_mm: float = 15,
+    bottom_mm: float = 15,
+    page_w_mm: float = 210,
+    page_h_mm: float = 297,
+) -> None:
+    for section in doc.sections:
+        section.page_width = Mm(page_w_mm)
+        section.page_height = Mm(page_h_mm)
+
+        section.left_margin = Mm(left_mm)
+        section.right_margin = Mm(right_mm)
+        section.top_margin = Mm(top_mm)
+        section.bottom_margin = Mm(bottom_mm)
 
 # ============================================================
 # HyperLinks
@@ -469,7 +488,7 @@ def _replace_placeholder_experience_blocks(
                 )
 
             default_bullets = exp.bullets.es if lang == "es" else exp.bullets.en
-            use_bullets = (bullets_per_experience or {}).get(exp.company, default_bullets)
+            use_bullets = (bullets_per_experience or {}).get(exp.company, default_bullets) or []
 
             for b in use_bullets:
                 bb = _strip_leading_bullet_markers(b)
@@ -652,6 +671,15 @@ def build_cv_docx(
     - Ensure your template has the style "Bullet 2" (Avenir Next Regular 10pt).
     """
     doc: DocxDocument = docx.Document(template_path)
+    _set_page_layout(
+        doc,
+        left_mm=10,
+        right_mm=15,
+        top_mm=15,
+        bottom_mm=15,
+        page_w_mm=210,
+        page_h_mm=297
+        )
 
     contact = cv.profile.contact
     loc = contact.location.es if lang == "es" else contact.location.en

@@ -8,6 +8,12 @@ __pycache__/
 .env.local
 .env.*
 
+# Generated output
+output/*
+!output/.gitkeep
+
+# Data files
+*.txt
+
 # OS / editor
 .DS_Store
-.vscode/
