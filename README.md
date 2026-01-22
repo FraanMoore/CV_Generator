@@ -45,5 +45,6 @@ Open the generated file located in the output/ folder
 Review or edit the CV as needed
 
 ## Track Your Applications
-_YES! I made a csv file_
+_YES! I made a csv file._
+
 Each generated CV corresponds to a specific job application, making it easier to keep track of where and how you have applied

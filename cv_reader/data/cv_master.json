@@ -7,8 +7,8 @@
   "profile": {
     "name": "Francisca Moore",
     "title": {
-      "es": "Desarrollador de Software",
-      "en": "Software Developer"
+      "es": "Desarrollador de Software Frontend",
+      "en": "Frontend Software Developer"
     },
     "contact": {
       "phone": "+56 9 7351 8292",
@@ -28,14 +28,18 @@
   },
   "summary": {
     "es": [
-      "Soy desarrolladora de software especializada en frontend, con experiencia en el desarrollo de aplicaciones web complejas. Me enfoco en construir interfaces mantenibles, optimizar el rendimiento y resolver desafíos técnicos con una mirada orientada al producto.",
-      "He trabajado con manejo avanzado de estado, consumo de APIs y colaboración cercana con equipos de diseño y backend, priorizando la calidad del código y la experiencia de usuario.",
+      "Desarrolladora de software frontend especializada en React y TypeScript, con experiencia profesional en el desarrollo de aplicaciones web complejas en entornos de producción. Enfocada en la construcción de interfaces mantenibles, optimización de rendimiento y resolución de desafíos técnicos con una mirada orientada al producto.",
+
+      "Con experiencia en manejo avanzado de estado, integración y consumo de APIs, y colaboración cercana con equipos de diseño y backend, priorizando de forma constante la calidad del código, la escalabilidad y la experiencia de usuario.",
+
       "Busco integrarme a un equipo donde pueda seguir creciendo técnicamente y aportar al desarrollo de productos sólidos, escalables y de alto impacto."
     ],
     "en": [
-      "I am a frontend-focused software developer with experience building complex web applications. I specialize in creating maintainable interfaces, optimizing performance, and solving technical challenges with a strong product-oriented mindset.",
-      "have worked extensively with advanced state management, API integration, and close collaboration with design and backend teams, always prioritizing code quality and user experience.",
-      "I am looking to join a team where I can continue growing technically while contributing to the development of robust, scalable, and high-impact products."
+      "Frontend software developer specialized in React and TypeScript, with professional experience building complex web applications in production environments. Focused on creating maintainable user interfaces, optimizing performance, and solving technical challenges with a strong product-oriented mindset.",
+
+      "Experienced in advanced state management, API integration, and close collaboration with design and backend teams, consistently prioritizing code quality, scalability, and user experience.",
+
+      "Looking to join a team where I can continue growing technically while contributing to the development of robust, scalable, and high-impact products."
     ]
   },
   "experience": [
@@ -53,20 +57,21 @@
       "end_year": 2026,
       "bullets": {
         "es": [
-          "Desarrollo y mantención de aplicaciones de software orientadas a estabilidad, escalabilidad y calidad.",
-          "Implementación de nuevas funcionalidades y mejoras continuas del sistema.",
-          "Integración con APIs y manejo de lógica de negocio.",
-          "Corrección de errores, factorización y optimización del código.",
-          "Colaboración con equipos multidisciplinarios para análisis de requerimientos y definición de soluciones técnicas.",
-          "Aplicación de buenas prácticas de desarrollo, con foco en rendimiento y mantenibilidad."
+          "Desarrollo y mantenimiento de aplicaciones de software con foco en estabilidad, escalabilidad y calidad.",
+          "Implementación de nuevas funcionalidades y mejoras continuas en entornos productivos.",
+          "Integración y consumo de APIs, junto con la implementación y mantenimiento de la lógica de negocio.",
+          "Corrección de errores, refactorización y optimización del código, respaldadas por pruebas unitarias e integrales con Jest y React Testing Library, mejorando la confiabilidad del sistema y reduciendo regresiones en producción.",
+          "Colaboración con equipos multidisciplinarios en el análisis de requerimientos y definición de soluciones técnicas.",
+          "Aplicación consistente de buenas prácticas de desarrollo, priorizando performance, calidad del código y sostenibilidad a largo plazo."
+
         ],
         "en": [
           "Development and maintenance of software applications with a focus on stability, scalability, and quality.",
-          "Implementation of new features and continuous system improvements.",
-          "Integration and consumption of APIs, along with the design and maintenance of business logic.",
-          "Bug fixing, code refactoring, and optimization to improve performance and maintainability.",
+          "Implementation of new features and continuous improvements in production environments.",
+          "API integration and consumption, including the implementation and maintenance of business logic.",
+          "Bug fixing, code refactoring, and optimization, supported by unit and integration tests using Jest and React Testing Library to improve reliability and maintainability.",
           "Collaboration with cross-functional teams to analyze requirements and define technical solutions.",
-          "Consistent application of best development practices, prioritizing performance and software quality."
+          "Consistent application of best development practices, prioritizing performance, code quality, and long-term sustainability."
         ]
       },
       "tags": ["software-development", "frontend", "product-mindset", "performance", "apis"]
@@ -129,9 +134,33 @@
     }
   ],
   "skills": {
-    "core": ["JavaScript", "TypeScript", "React", "HTML", "CSS"],
-    "apis": ["REST API", "JWT"],
-    "tooling": ["Git", "GitHub"]
+    "core": [
+              "JavaScript (ES6+)",
+              "TypeScript",
+              "React",
+              "Redux",
+              "React Hooks",
+              "RTK Query",
+              "react-hook-form"
+             ],
+    "ui": [
+            "HTML5",
+            "CSS3",
+            "styled-components",
+            "Material UI (MUI)"
+          ],
+    "apis": [
+            "REST APIs",
+            "OpenAI API"
+          ],
+    "tooling": [
+            "Jest",
+            "React Testing Library",
+            "Git",
+            "GitHub",
+            "ESLint",
+            "Prettier"
+          ]
   },
   "languages": [
     { "name": "Español", "level": { "es": "Nativo", "en": "Native" } },
