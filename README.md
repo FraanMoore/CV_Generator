@@ -15,6 +15,7 @@ source .venv/bin/activate
 ```
 
 Use the following command to generate CVs with AI assistance:
+**Make sure to updated the variables**
 ```
     python3 jobtailor.py \
   --job-text oferta1.txt \
@@ -27,6 +28,7 @@ Use the following command to generate CVs with AI assistance:
 ```
 
 If you prefer to generate CVs without AI, use this command:
+**Make sure to updated the variables**
 ```
     python3 jobtailor.py \
   --job-text oferta.txt \
