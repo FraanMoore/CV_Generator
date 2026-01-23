@@ -17,7 +17,7 @@ from docx.text.paragraph import Paragraph
 
 from src.models import CVMaster
 
-COLOR_TITLE = RGBColor(0x00, 0x67, 0xB8)
+COLOR_TITLE = RGBColor(0x22, 0x7A, 0xAF)
 COLOR_TEXT  = RGBColor(0x00, 0x00, 0x00)
 COLOR_SUB_TITLE = RGBColor(0x53, 0x53, 0x53)
 FONT_NAME = "Avenir Next"
@@ -34,7 +34,7 @@ def _set_page_layout(
     left_mm: float = 10,
     right_mm: float = 15,
     top_mm: float = 15,
-    bottom_mm: float = 15,
+    bottom_mm: float = 10,
     page_w_mm: float = 210,
     page_h_mm: float = 297,
 ) -> None:
@@ -51,7 +51,7 @@ def _set_page_layout(
 # HyperLinks
 # ============================================================
 
-def add_hyperlink(
+def _add_hyperlink(
     paragraph: Paragraph,
     text: str,
     url: str,
@@ -76,10 +76,15 @@ def add_hyperlink(
     # Create hyperlink element
     hyperlink = OxmlElement("w:hyperlink")
     hyperlink.set(qn("r:id"), r_id)
+    hyperlink.set(qn("w:history"), "1")
 
     # Create run
     r = OxmlElement("w:r")
     r_pr = OxmlElement("w:rPr")
+
+    r_style = OxmlElement("w:rStyle")
+    r_style.set(qn("w:val"), "Hyperlink")
+    r_pr.append(r_style)
 
     # Font name
     if font_name:
@@ -93,6 +98,10 @@ def add_hyperlink(
         sz = OxmlElement("w:sz")
         sz.set(qn("w:val"), str(int(font_size * 2)))
         r_pr.append(sz)
+
+        sz_cs = OxmlElement("w:szCs")
+        sz_cs.set(qn("w:val"), str(int(font_size * 2)))
+        r_pr.append(sz_cs)
 
     # Color
     if color:
@@ -119,6 +128,66 @@ def add_hyperlink(
 
     hyperlink.append(r)
     paragraph._p.append(hyperlink)
+
+def _set_footer_hyperlink_i18n(
+    doc: DocxDocument,
+    *,
+    text_es: str,
+    text_en: str,
+    url: str,
+    lang: str,
+    font_name: str = FONT_NAME,
+    font_size: float = FONT_SIZE_HYPERLINK,
+    color: RGBColor = COLOR_SUB_TITLE,
+    align: WD_ALIGN_PARAGRAPH = WD_ALIGN_PARAGRAPH.CENTER,
+) -> None:
+    """
+    Sets a footer that contains ONLY a hyperlink text,
+    choosing Spanish or English based on `lang`.
+    """
+    text = text_es if lang == "es" else text_en
+
+    for section in doc.sections:
+        footer = section.footer
+
+        for p in footer.paragraphs:
+            p.clear()
+
+        p = footer.paragraphs[0]
+        p.alignment = align
+
+        _add_hyperlink(
+            p,
+            text=text,
+            url=url,
+            font_name=font_name,
+            font_size=font_size,
+            color=color,
+            underline=True,
+        )
+
+def _replace_exact_paragraph_with_hyperlink(
+    doc: DocxDocument,
+    exact_text: str,
+    link_text: str,
+    url: str,
+) -> bool:
+    for p in _iter_paragraphs(doc):
+        if p.text.strip() != exact_text:
+            continue
+        _clear_paragraph(p)
+        _add_hyperlink(
+            p,
+            text=link_text,
+            url=url,
+            font_name=FONT_NAME_DEMI_BOLD,
+            font_size=FONT_SIZE_TITLES,
+            color=COLOR_TITLE,
+            underline=True,
+        )
+        return True
+    return False
+
 
 # ============================================================
 # Styles
@@ -359,7 +428,7 @@ def _replace_placeholder_contact(
         add_text(phone)
         add_text(" | ")
 
-        add_hyperlink(
+        _add_hyperlink(
             p,
             text="LinkedIn",
             url=linkedin_url,
@@ -371,7 +440,7 @@ def _replace_placeholder_contact(
 
         add_text(" | ")
 
-        add_hyperlink(
+        _add_hyperlink(
             p,
             text="GitHub",
             url=github_url,
@@ -612,43 +681,6 @@ def _languages_lines(cv: CVMaster, lang: str) -> list[str]:
         out.append(f"{lng.name} — {level}")
     return out
 
-def _set_footer_hyperlink_i18n(
-    doc: DocxDocument,
-    *,
-    text_es: str,
-    text_en: str,
-    url: str,
-    lang: str,
-    font_name: str = FONT_NAME,
-    font_size: float = FONT_SIZE_HYPERLINK,
-    color: RGBColor = COLOR_SUB_TITLE,
-    align: WD_ALIGN_PARAGRAPH = WD_ALIGN_PARAGRAPH.CENTER,
-) -> None:
-    """
-    Sets a footer that contains ONLY a hyperlink text,
-    choosing Spanish or English based on `lang`.
-    """
-    text = text_es if lang == "es" else text_en
-
-    for section in doc.sections:
-        footer = section.footer
-
-        for p in footer.paragraphs:
-            p.clear()
-
-        p = footer.paragraphs[0]
-        p.alignment = align
-
-        add_hyperlink(
-            p,
-            text=text,
-            url=url,
-            font_name=font_name,
-            font_size=font_size,
-            color=color,
-            underline=True,
-        )
-
 # ============================================================
 # Public API
 # ============================================================
@@ -715,7 +747,12 @@ def build_cv_docx(
         job_title_color=COLOR_SUB_TITLE,
     )
 
-
+    _replace_exact_paragraph_with_hyperlink(
+        doc,
+        exact_text="Educación" if lang == "es" else "Education",
+        link_text="Education and Certifications" if lang == "en" else "Educación y Certificaciones",
+        url="https://drive.google.com/drive/u/0/folders/1XmcnXtTeu-2l4snJg5-pUK7orA7iWxBI",
+    )
     _replace_placeholder_bullets(doc, "EDUCATION", _education_lines(cv, lang), bullet_style="Bullet 2")
 
     skills = skills_ordered or (cv.skills.core + cv.skills.apis + cv.skills.tooling)

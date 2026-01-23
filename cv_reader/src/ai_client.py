@@ -1,6 +1,7 @@
 from __future__ import annotations
 from dotenv import load_dotenv
 load_dotenv()
+load_dotenv(dotenv_path=".env.local", override=True)
 try:
     import truststore
     truststore.inject_into_ssl()
