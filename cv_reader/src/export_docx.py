@@ -166,28 +166,44 @@ def _set_footer_hyperlink_i18n(
             underline=True,
         )
 
-def _replace_exact_paragraph_with_hyperlink(
+def _replace_placeholder_title_hyperlink(
     doc: DocxDocument,
-    exact_text: str,
-    link_text: str,
+    placeholder: str,
+    *,
+    text: str,
     url: str,
+    icon: str = "🔗",
+    font_name: str = FONT_NAME_DEMI_BOLD,
+    font_size: float = FONT_SIZE_TITLES,
+    color: RGBColor = COLOR_TITLE,
 ) -> bool:
+    token = f"{{{{{placeholder}}}}}"
+
     for p in _iter_paragraphs(doc):
-        if p.text.strip() != exact_text:
+        if token not in p.text:
             continue
+
         _clear_paragraph(p)
+
         _add_hyperlink(
             p,
-            text=link_text,
+            text=text,
             url=url,
-            font_name=FONT_NAME_DEMI_BOLD,
-            font_size=FONT_SIZE_TITLES,
-            color=COLOR_TITLE,
+            font_name=font_name,
+            font_size=font_size,
+            color=color,
             underline=True,
         )
-        return True
-    return False
+        r = p.add_run(f" {icon}")
+        r.font.name = font_name
+        r.font.size = Pt(font_size)
+        r.font.color.rgb = color
+        r.bold = False
 
+        p.alignment = WD_PARAGRAPH_ALIGNMENT.LEFT
+        return True
+
+    return False
 
 # ============================================================
 # Styles
@@ -386,7 +402,6 @@ def _replace_placeholder_title(
             if color:
                 run.font.color.rgb = color
 
-            p.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
             return True
 
     return False
@@ -685,6 +700,24 @@ def _languages_lines(cv: CVMaster, lang: str) -> list[str]:
 # Public API
 # ============================================================
 
+TITLES_I18N = {
+    "es": {
+        "summary_title": "Sobre Mi",
+        "Experience_title": "Experiencia",
+        "Education_title": "Educación y Certificaciones",
+        "skills_title": "Habilidades",
+        "language_title": "Idiomas",
+    },
+    "en": {
+        "summary_title": "About Me",
+        "Experience_title": "Experience Work",
+        "Education_title": "Education & Certifications",
+        "skills_title": "Skills",
+        "language_title": "Languages",
+    },
+}
+
+
 def build_cv_docx(
     cv: CVMaster,
     lang: str,
@@ -712,7 +745,7 @@ def build_cv_docx(
         page_w_mm=210,
         page_h_mm=297
         )
-
+    titles = TITLES_I18N[lang]
     contact = cv.profile.contact
     loc = contact.location.es if lang == "es" else contact.location.en
     title = cv.profile.title.es if lang == "es" else cv.profile.title.en
@@ -731,6 +764,10 @@ def build_cv_docx(
       linkedin_url=linkedin_url,
       github_url=github_url
   )
+    _replace_placeholder_title(doc, "summary_title", titles["summary_title"])
+    _replace_placeholder_title(doc, "Experience_title", titles["Experience_title"])
+    _replace_placeholder_title(doc, "skills_title", titles["skills_title"])
+    _replace_placeholder_title(doc, "language_title", titles["language_title"])
 
     _replace_placeholder_paragraph(doc, "SUMMARY", _summary_as_paragraph(cv, lang))
 
@@ -747,10 +784,10 @@ def build_cv_docx(
         job_title_color=COLOR_SUB_TITLE,
     )
 
-    _replace_exact_paragraph_with_hyperlink(
+    _replace_placeholder_title_hyperlink(
         doc,
-        exact_text="Educación" if lang == "es" else "Education",
-        link_text="Education and Certifications" if lang == "en" else "Educación y Certificaciones",
+        "Education_title",
+        text=titles["Education_title"],
         url="https://drive.google.com/drive/u/0/folders/1XmcnXtTeu-2l4snJg5-pUK7orA7iWxBI",
     )
     _replace_placeholder_bullets(doc, "EDUCATION", _education_lines(cv, lang), bullet_style="Bullet 2")
