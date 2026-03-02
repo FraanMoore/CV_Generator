@@ -28,18 +28,18 @@
   },
   "summary": {
     "es": [
-      "Desarrolladora de software frontend especializada en React y TypeScript, con experiencia profesional en el desarrollo de aplicaciones web complejas en entornos de producción. Enfocada en la construcción de interfaces mantenibles, optimización de rendimiento y resolución de desafíos técnicos con una mirada orientada al producto.",
+      "Desarrolladora de software frontend especializada en React y TypeScript, con experiencia profesional en la construcción de aplicaciones web complejas. Enfocada en crear interfaces mantenibles, optimizar el rendimiento y resolver desafíos técnicos con una mentalidad orientada al producto.",
 
-      "Con experiencia en manejo avanzado de estado, integración y consumo de APIs, y colaboración cercana con equipos de diseño y backend, priorizando de forma constante la calidad del código, la escalabilidad y la experiencia de usuario.",
+      "Experta en el manejo avanzado de estado, integración de APIs y colaboración estrecha con equipos de diseño y backend, priorizando siempre la calidad del código, la escalabilidad y la experiencia del usuario.",
 
-      "Busco integrarme a un equipo donde pueda seguir creciendo técnicamente y aportar al desarrollo de productos sólidos, escalables y de alto impacto."
+      "Busco integrarme a un equipo donde pueda potenciar mi crecimiento técnico y aportar al desarrollo de productos sólidos y de alto impacto."
     ],
     "en": [
-      "Frontend software developer specialized in React and TypeScript, with professional experience building complex web applications in production environments. Focused on creating maintainable user interfaces, optimizing performance, and solving technical challenges with a strong product-oriented mindset.",
+      "Frontend Software Developer specialized in React and TypeScript, with professional experience building complex web applications. Focused on creating maintainable interfaces, optimizing performance, and solving technical challenges with a strong product-oriented mindset.",
 
-      "Experienced in advanced state management, API integration, and close collaboration with design and backend teams, consistently prioritizing code quality, scalability, and user experience.",
+      "Expert in advanced state management, API integration, and cross-functional collaboration with design and backend teams, consistently prioritizing code quality and user experience.",
 
-      "Looking to join a team where I can continue growing technically while contributing to the development of robust, scalable, and high-impact products."
+      "Seeking to join a high-performing team where I can continue growing technically while contributing to the development of robust and high-impact products."
     ]
   },
   "experience": [
@@ -57,21 +57,21 @@
       "end_year": 2026,
       "bullets": {
         "es": [
-          "Desarrollo y mantenimiento de aplicaciones de software con foco en estabilidad, escalabilidad y calidad.",
-          "Implementación de nuevas funcionalidades y mejoras continuas en entornos productivos.",
-          "Integración y consumo de APIs, junto con la implementación y mantenimiento de la lógica de negocio.",
-          "Corrección de errores, refactorización y optimización del código, respaldadas por pruebas unitarias e integrales con Jest y React Testing Library, mejorando la confiabilidad del sistema y reduciendo regresiones en producción.",
-          "Colaboración con equipos multidisciplinarios en el análisis de requerimientos y definición de soluciones técnicas.",
-          "Aplicación consistente de buenas prácticas de desarrollo, priorizando performance, calidad del código y sostenibilidad a largo plazo."
+          "Desarrollo y mantenimiento de aplicaciones escalables y estables, garantizando altos estándares de calidad.",
+          "Implementación de nuevas funcionalidades y mejoras continuas directamente en entornos productivos.",
+          "Integración de APIs y desarrollo de lógica de negocio compleja, asegurando la sincronización eficiente de datos.",
+          "Optimización y refactorización de código, con un enfoque en la reducción de errores mediante pruebas unitarias y de integración (Jest y React Testing Library).",
+          "Colaboración con equipos multidisciplinarios para el análisis de requerimientos y la definición de arquitecturas técnicas.",
+          "Aplicación de buenas prácticas de desarrollo, priorizando el rendimiento y la sostenibilidad del software a largo plazo."
 
         ],
         "en": [
-          "Development and maintenance of software applications with a focus on stability, scalability, and quality.",
-          "Implementation of new features and continuous improvements in production environments.",
-          "API integration and consumption, including the implementation and maintenance of business logic.",
-          "Bug fixing, code refactoring, and optimization, supported by unit and integration tests using Jest and React Testing Library to improve reliability and maintainability.",
-          "Collaboration with cross-functional teams to analyze requirements and define technical solutions.",
-          "Consistent application of best development practices, prioritizing performance, code quality, and long-term sustainability."
+          "Develop and maintain scalable software applications with a steadfast focus on stability, performance, and code quality",
+          "Implement new features and continuous improvements within production environments, ensuring zero-downtime deployments.",
+          "Architect and manage business logic through seamless API integration and consumption.",
+          "Execute bug fixes, refactoring, and code optimizations, leveraging unit and integration testing (Jest & React Testing Library) to minimize regressions.",
+          "Collaborate with cross-functional teams to analyze requirements and define robust technical solutions.",
+          "Uphold high development standards, prioritizing performance and long-term software sustainability."
         ]
       },
       "tags": ["software-development", "frontend", "product-mindset", "performance", "apis"]
@@ -90,18 +90,18 @@
       "end_year": 2024,
       "bullets": {
         "es": [
-          "Mantención de comunicación directa y efectiva con clientes, enfocada en la resolución de consultas relacionadas con pagos y facturación.",
-          "Entrega de respuestas claras y detalladas sobre estados de cuenta, asegurando la correcta comprensión y satisfacción del cliente.",
-          "Colaboración con otras áreas para la mejora continua de los procesos de facturación y la optimización de la experiencia del cliente.",
-          "Revisión y análisis de facturas mediante los sistemas Oracle y Travelio.",
-          "Carga y gestión de facturas del Servicio de Impuestos Internos en el sistema Oracle."
+          "Gestión de comunicación directa con clientes, asegurando la resolución eficiente de consultas críticas sobre pagos y facturación.",
+          "Análisis y conciliación de estados de cuenta, garantizando la claridad de la información y la satisfacción del cliente.",
+          "Colaboración interdepartamental para la optimización de procesos de facturación y la mejora de la experiencia del usuario final.",
+          "Auditoría y análisis de facturación mediante el uso de sistemas Oracle y Travelio.",
+          "Administración y carga de documentos tributarios (SII) en el sistema Oracle, asegurando la integridad de los datos financieros."
         ],
         "en": [
-          "Maintained direct and effective communication with clients, focusing on resolving billing and payment inquiries.",
-          "Provided clear and detailed explanations of account statements to ensure understanding and customer satisfaction.",
-          "Collaborated with other teams to continuously improve billing processes and optimize the customer experience.",
-          "Reviewed and analyzed invoices using Oracle and Travelio.",
-          "Uploaded and managed invoices from the Internal Revenue Service in Oracle."
+          "Managed direct communication with clients, resolving complex inquiries regarding payments and billing.",
+          "Analyzed and reconciled account statements to ensure data accuracy and customer satisfaction.",
+          "Collaborated with cross-functional teams to streamline billing processes and enhance the customer experience.",
+          "Performed detailed invoice analysis and auditing using Oracle and Travelio systems.",
+          "Administered and processed tax documents (SII) within the Oracle ERP system, maintaining financial data integrity."
         ]
       },
       "tags": ["operations", "billing", "customer-communication", "oracle"]
@@ -144,10 +144,13 @@
               "react-hook-form"
              ],
     "ui": [
+            "HTML",
             "HTML5",
+            "CSS",
             "CSS3",
-            "styled Components",
-            "Material UI (MUI)"
+            "Styled Components",
+            "Material UI (MUI)",
+            "Bootstrap"
           ],
     "apis": [
             "REST APIs",
