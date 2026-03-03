@@ -1,0 +1,12 @@
+/* Color Primary */
+:root {
+    --color-primary: #673ab7;
+    --color-primary-light: #9575cd;
+    --color-primary-dark: #512da8;
+}
+/* Color Font */
+:root {
+    --color-font: #f5f5f5;
+    --color-font-light: #fafafa;
+    --color-font-dark: #e0e0e0;
+}
