@@ -12,9 +12,9 @@ import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
 import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
 import * as React from 'react';
 import { useLayout } from '../hooks/useLayout';
+import BaseTypography from '../utils/BaseTypography';
 
 
 
@@ -112,8 +112,8 @@ const DrawerContainer = styled(Box)`
     text-align: center;
 `;
 
-const DrawerTitle = styled(Typography)`
-    variant: h6;
+const DrawerTitle = styled(BaseTypography)`
+    font-size: var(--font-size-h6);
     margin: 16px;
 `;
 
@@ -138,10 +138,10 @@ const ButtonBox = styled(Box) <{ $isMobile: boolean }>`
     display: ${props => (props.$isMobile ? 'none' : 'block')};
 `;
 
-const Title = styled(Typography) <{ $isMobile: boolean }>`
+const Title = styled(BaseTypography) <{ $isMobile: boolean }>`
     flex-grow: 1;
     display: ${props => (props.$isMobile ? 'none' : 'block')};
-    variant: h6;
+    font-size: var(--font-size-h6);
 `;
 
 const StyledButton = styled(Button)`
