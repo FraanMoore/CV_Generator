@@ -15,8 +15,7 @@ import Toolbar from '@mui/material/Toolbar';
 import * as React from 'react';
 import { useLayout } from '../hooks/useLayout';
 import BaseTypography from '../utils/BaseTypography';
-
-
+import NewEntryDialog, { NewEntryButton } from './NewEntryDialog';
 
 interface Props {
     /**
@@ -32,11 +31,15 @@ const navItems = ['Home', 'Postulations', 'New Entry'];
 const Navbar = (props: Props) => {
     const { window } = props;
     const [mobileOpen, setMobileOpen] = React.useState(false);
+    const [newEntryOpen, setNewEntryOpen] = React.useState(false);
     const { isMobile } = useLayout();
 
     const handleDrawerToggle = () => {
         setMobileOpen((prevState) => !prevState);
     };
+
+    const handleOpenNewEntry = () => setNewEntryOpen(true);
+    const handleCloseNewEntry = () => setNewEntryOpen(false);
 
     const drawer = (
         <DrawerContainer onClick={handleDrawerToggle}>
@@ -79,13 +82,20 @@ const Navbar = (props: Props) => {
                     </Title>
                     <ButtonBox $isMobile={isMobile}>
                         {navItems.map((item) => (
-                            <StyledButton key={item}>
-                                {item}
-                            </StyledButton>
+                            item === 'New Entry' ? (
+                                <NewEntryButton key={item} onClick={handleOpenNewEntry}>
+                                    {item}
+                                </NewEntryButton>
+                            ) : (
+                                <StyledButton key={item}>
+                                    {item}
+                                </StyledButton>
+                            )
                         ))}
                     </ButtonBox>
                 </Toolbar>
             </StyledAppBar>
+            <NewEntryDialog open={newEntryOpen} onClose={handleCloseNewEntry} onCreate={() => { }} />
             <nav>
                 <StyledDrawer
                     container={container}
@@ -108,7 +118,7 @@ export default Navbar;
 
 const DrawerContainer = styled(Box)`
     background-color: var(--color-primary-light);
-    color: var(--color-font);
+    color: var(--color-font-primary);
     text-align: center;
 `;
 
@@ -145,7 +155,7 @@ const Title = styled(BaseTypography) <{ $isMobile: boolean }>`
 `;
 
 const StyledButton = styled(Button)`
-    color: var(--color-font);
+    color: var(--color-font-primary);
     &:hover {
         border: 1px solid var(--color-primary-dark);
     }

@@ -61,7 +61,8 @@ const PostulationCard = ({
                 </URLNotesTypography>
             </CardContent>
             <CardActions>
-                <Button size="small" onClick={handleMoreDetails}>More details</Button>
+                <StyledButton size="small" onClick={handleMoreDetails}>More details</StyledButton>
+                <StyledButton size="small" onClick={handleMoreDetails}>Edit</StyledButton>
             </CardActions>
         </React.Fragment>
     );
@@ -109,4 +110,9 @@ const URLNotesTypography = styled(BaseTypography)`
         font-size: var(--font-size-h6);
         text-decoration: none;
     }
+`;
+const StyledButton = styled(Button)`
+    color: var(--color-font-dark);
+    font-size: var(--font-size-h6);
+    text-transform: none;
 `;

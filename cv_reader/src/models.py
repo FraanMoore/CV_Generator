@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from typing import Dict, List, Optional
 from pydantic import BaseModel
+from enum import Enum
+from datetime import datetime
 
 
 class TitleI18n(BaseModel):
@@ -96,3 +98,32 @@ class CVMaster(BaseModel):
   education: List[Education]
   skills: Skills
   languages: List[Language]
+
+
+class ApplicationStatus(str, Enum):
+  APPLIED = "applied"
+  IN_PROCESS = "in_process"
+  REJECTED = "rejected"
+  OFFER = "offer"
+  WITHDRAWN = "withdrawn"
+
+
+class Application(BaseModel):
+  """Representa una postulación individual.
+
+  Se diferencia de otras postulaciones por el campo `id` único.
+  """
+
+  id: str  # identificador único de la postulación (por ejemplo: timestamp_empresa_puesto)
+  company: str
+  position: str
+  status: ApplicationStatus = ApplicationStatus.APPLIED
+  created_at: datetime = datetime.utcnow()
+  updated_at: Optional[datetime] = None
+
+  # Campos opcionales que ya manejas en el output
+  output_dir: Optional[str] = None  # nombre de la carpeta en output/ asociada a esta postulación
+  index_row_id: Optional[int] = None  # índice o id de fila en index.csv/jsonl si aplica
+
+  notes: Optional[str] = None
+  metadata: Dict[str, object] = {}

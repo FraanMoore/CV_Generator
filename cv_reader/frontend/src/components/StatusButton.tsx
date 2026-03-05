@@ -5,13 +5,20 @@ import Select, { type SelectChangeEvent } from '@mui/material/Select';
 import * as React from 'react';
 import styled from 'styled-components';
 
+export type StatusButtonProps = {
+    jobStatus: 'applied' | 'interviewing' | 'offer' | 'rejected' | 'draft' | string;
+    onChangeStatus?: (status: 'applied' | 'interviewing' | 'offer' | 'rejected' | 'draft') => void;
+};
 
-
-const StatusButton = ({ jobStatus }: { jobStatus: string }) => {
+const StatusButton = ({ jobStatus, onChangeStatus }: StatusButtonProps) => {
     const [status, setStatus] = React.useState(jobStatus);
 
     const handleChange = (event: SelectChangeEvent) => {
-        setStatus(event.target.value);
+        const newStatus = event.target.value;
+        setStatus(newStatus);
+        if (onChangeStatus) {
+            onChangeStatus(newStatus as 'applied' | 'interviewing' | 'offer' | 'rejected' | 'draft');
+        }
     };
 
     return (
