@@ -3,11 +3,13 @@ import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
-import Typography from '@mui/material/Typography';
+import Link from '@mui/material/Link';
 import * as React from 'react';
+import { useState } from 'react';
 import styled from 'styled-components';
 import { useLayout } from '../hooks/useLayout';
 import BaseTypography from '../utils/BaseTypography';
+import MoreDetailsDialog from './MoreDetailsDialog';
 import StatusButton from './StatusButton';
 
 export type PostulationCardProps = {
@@ -16,6 +18,8 @@ export type PostulationCardProps = {
     jobURL: string;
     status: 'applied' | 'interviewing' | 'offer' | 'rejected' | 'draft';
     notes: string;
+    jobDescription: string;
+    keyWords: string;
 };
 
 const PostulationCard = ({
@@ -23,9 +27,20 @@ const PostulationCard = ({
     role,
     jobURL,
     status,
-    notes
+    notes,
+    jobDescription,
+    keyWords
 }: PostulationCardProps) => {
     const { isMobile } = useLayout();
+    const [open, setOpen] = useState(false);
+
+    const handleMoreDetails = () => {
+        setOpen(true);
+    };
+
+    const handleClose = () => {
+        setOpen(false);
+    };
 
     const card = (
         <React.Fragment>
@@ -37,22 +52,26 @@ const PostulationCard = ({
                     {company}
                 </CompanyTypography>
                 <StatusButton jobStatus={status} />
-                <Typography variant="body2">
-                    {jobURL}.
+                <URLNotesTypography>
+                    <Link onClick={() => window.open(jobURL, '_blank')}>
+                        URL job offer
+                    </Link>
                     <br />
                     {notes}
-                </Typography>
+                </URLNotesTypography>
             </CardContent>
             <CardActions>
-                <Button size="small">More details</Button>
+                <Button size="small" onClick={handleMoreDetails}>More details</Button>
             </CardActions>
         </React.Fragment>
     );
+
     return (
         <Container>
             <CardContainer $isMobile={isMobile}>
                 <StyledCard $isMobile={isMobile} variant="outlined">{card}</StyledCard>
             </CardContainer>
+            <MoreDetailsDialog open={open} onClose={handleClose} jobDescription={jobDescription} keyWords={keyWords} />
         </Container>
     );
 
@@ -80,4 +99,14 @@ const RoleTypography = styled(BaseTypography)`
 const CompanyTypography = styled(BaseTypography)`
     font-size: var(--font-size-h5);
     color: var(--color-primary);
+`;
+const URLNotesTypography = styled(BaseTypography)`
+    font-size: var(--font-size-h6);
+    color: var(--color-primary-light);
+    margin-top: 18px;
+    a{
+        color: var(--color-primary-light);
+        font-size: var(--font-size-h6);
+        text-decoration: none;
+    }
 `;

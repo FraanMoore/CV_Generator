@@ -12,6 +12,8 @@ const TestComponent = (props: Partial<PostulationCardProps>) => {
             jobURL="https://example.com"
             status="applied"
             notes="No notes available"
+            jobDescription='No description available'
+            keyWords='keyword1, keyword2'
             {...props}
         />
     );
