@@ -51,9 +51,11 @@ const PostulationCard = ({
                 </CompanyTypography>
                 <StatusButton jobStatus={status} />
                 <URLNotesTypography>
-                    <Link onClick={() => window.open(jobURL, '_blank')}>
-                        URL job offer
-                    </Link>
+                    {jobURL &&
+                        <Link onClick={() => window.open(jobURL, '_blank')}>
+                            URL job offer
+                        </Link>
+                    }
                     <br />
                     {notes}
                 </URLNotesTypography>
@@ -94,11 +96,11 @@ const StyledCard = styled(Card)`
 
 const RoleTypography = styled(BaseTypography)`
     font-size: var(--font-size-h6);
-    color: var(--color-primary-light);
+    color: var(--color-primary);
 `;
 const CompanyTypography = styled(BaseTypography)`
     font-size: var(--font-size-h5);
-    color: var(--color-primary);
+    color: var(--color-primary-dark);
 `;
 const URLNotesTypography = styled(BaseTypography)`
     font-size: var(--font-size-h6);

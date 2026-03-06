@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import styled from "styled-components";
 import { fetchApplications, type Application } from "../utils/api";
 import Navbar from "./Navbar";
+import TablePaginationDemo from "./Pagination";
 import PostulationCard from "./PostulationCard";
 
 const Home = () => {
@@ -58,6 +59,7 @@ const Home = () => {
                     />
                 ))}
             </CardWrapper>
+            <TablePaginationDemo />
         </>
     );
 };

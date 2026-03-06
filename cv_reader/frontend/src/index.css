@@ -26,3 +26,18 @@
     background: var(--color-background);
  }
  
+ /* color status */
+ :root {
+    --color-draft: #94a3b8;
+    --color-applied: #3b82f6;
+    --color-interviewing: #8b5cf6;
+    --color-offer: #10b981;
+    --color-rejected: #ef4444;
+
+    /* color background status */
+    --bg-draft: #f1f5f9;
+    --bg-applied: #eff6ff;
+    --bg-interviewing: #f5f3ff;
+    --bg-offer: #ecfdf5;
+    --bg-rejected: #fef2f2;
+}

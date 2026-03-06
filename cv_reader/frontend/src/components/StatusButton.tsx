@@ -10,6 +10,8 @@ export type StatusButtonProps = {
     onChangeStatus?: (status: 'applied' | 'interviewing' | 'offer' | 'rejected' | 'draft') => void;
 };
 
+type status = 'applied' | 'interviewing' | 'offer' | 'rejected' | 'draft';
+
 const StatusButton = ({ jobStatus, onChangeStatus }: StatusButtonProps) => {
     const [status, setStatus] = React.useState(jobStatus);
 
@@ -17,12 +19,12 @@ const StatusButton = ({ jobStatus, onChangeStatus }: StatusButtonProps) => {
         const newStatus = event.target.value;
         setStatus(newStatus);
         if (onChangeStatus) {
-            onChangeStatus(newStatus as 'applied' | 'interviewing' | 'offer' | 'rejected' | 'draft');
+            onChangeStatus(newStatus as status);
         }
     };
 
     return (
-        <StyledFormControl size="small">
+        <StyledFormControl size="small" $status={status as status}>
             <InputLabel id="demo-select-small-label">Status</InputLabel>
             <Select
                 labelId="demo-select-small-label"
@@ -42,8 +44,24 @@ const StatusButton = ({ jobStatus, onChangeStatus }: StatusButtonProps) => {
 };
 export default StatusButton;
 
-const StyledFormControl = styled(FormControl)`
+const StyledFormControl = styled(FormControl) <{ $status: status }>`
 &.MuiFormControl-root {
     margin-top: 12px;
+
+    background-color: var(--bg-${props => props.$status});
+    color: var(--color-${props => props.$status});
+}
+.MuiOutlinedInput-root{
+    background-color: var(--bg-${props => props.$status});
+    color: var(--color-${props => props.$status});
+    }
+
+& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline {
+    border-color: var(--color-${props => props.$status});
+    border-width: 1px;
+  }
+    &:hover .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline {
+    border-color: var(--color-${props => props.$status});
+  }
 }
 `;
