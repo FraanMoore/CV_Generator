@@ -104,6 +104,28 @@ async def list_applications():
     rows = _read_index_rows()
     return rows
 
+@app.get("/applications/{app_id}/description")
+async def get_application_description(app_id: int):
+    """
+    Devuelve el contenido del archivo .txt de job description
+    para una aplicación dada (por índice en index.csv).
+    """
+    rows = _read_index_rows()
+    if app_id < 0 or app_id >= len(rows):
+        raise HTTPException(status_code=404, detail="Application not found")
+
+    row = rows[app_id]
+
+    job_text_path = row.get("job_text_path")
+    if not job_text_path:
+        raise HTTPException(status_code=404, detail="job_text_path not found for this application")
+
+    job_txt_path = Path(job_text_path)
+    if not job_txt_path.exists():
+        raise HTTPException(status_code=404, detail="Job description file not found")
+
+    content = job_txt_path.read_text(encoding="utf-8")
+    return {"job_description": content}
 
 @app.get("/applications/{app_id}")
 async def get_application(app_id: int):
