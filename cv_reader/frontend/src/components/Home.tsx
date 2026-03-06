@@ -52,10 +52,11 @@ const Home = () => {
                         company={app.company}
                         role={app.role}
                         jobURL={app.job_url}
-                        status={(["applied", "interviewing", "offer", "rejected", "draft"].includes(app.status ?? "applied") ? app.status ?? "applied" : "applied") as 'applied' | 'interviewing' | 'offer' | 'rejected' | 'draft'}
+                        status={app.status ?? "draft"}
                         notes={app.notes || "Sin notas"}
                         jobDescription={"Sin descripción"}
                         keyWords={""}
+                        id={app.id}
                     />
                 ))}
             </CardWrapper>

@@ -7,6 +7,7 @@ import Stack from '@mui/material/Stack';
 import * as React from 'react';
 import { useState } from 'react';
 import styled from 'styled-components';
+import { fetchApplicationDescription } from '../utils/api';
 import BaseTypography from '../utils/BaseTypography';
 import MoreDetailsDialog from './MoreDetailsDialog';
 import StatusButton from './StatusButton';
@@ -19,6 +20,7 @@ export type PostulationCardProps = {
     notes: string;
     jobDescription: string;
     keyWords: string;
+    id: number;
 };
 
 const PostulationCard = ({
@@ -26,14 +28,27 @@ const PostulationCard = ({
     role,
     jobURL,
     status,
+    keyWords,
     notes,
-    jobDescription,
-    keyWords
+    id
 }: PostulationCardProps) => {
     const [open, setOpen] = useState(false);
+    const [jobDescription, setJobDescription] = useState<string>("Loading job description...");
+    const [loading, setLoading] = useState(false);
 
-    const handleMoreDetails = () => {
+    const handleMoreDetails = async () => {
         setOpen(true);
+        if (!jobDescription || jobDescription === "Loading job description...") {
+            try {
+                setLoading(true);
+                const text = await fetchApplicationDescription(id);
+                setJobDescription(text);
+            } catch {
+                setJobDescription("Error loading job description");
+            } finally {
+                setLoading(false);
+            }
+        }
     };
 
     const handleClose = () => {
@@ -66,6 +81,14 @@ const PostulationCard = ({
             </CardActions>
         </React.Fragment>
     );
+
+    if (loading) {
+        return (
+            <>
+                <p>Cargando...</p>
+            </>
+        );
+    }
 
     return (
         <Container className="postulation-card-container">

@@ -6,7 +6,7 @@ export type Application = {
   company: string;
   role: string;
   job_url: string;
-  status?: string;
+  status?: 'applied' | 'interviewing' | 'offer' | 'rejected' | 'draft';
   notes?: string;
   output_dir?: string;
 };
@@ -60,4 +60,13 @@ export async function uploadJobText(payload: UploadJobPayload) {
   }
 
   return res.json();
+}
+
+export async function fetchApplicationDescription(id: number): Promise<string> {
+  const res = await fetch(`${BASE_URL}/applications/${id}/description`);
+  if (!res.ok) {
+    throw new Error('Error fetching job description');
+  }
+  const data = await res.json();
+  return data.job_description;
 }
