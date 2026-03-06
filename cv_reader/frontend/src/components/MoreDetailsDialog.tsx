@@ -10,10 +10,12 @@ export type MoreDetailsDialogProps = {
     open: boolean;
     onClose: () => void;
     jobDescription: string;
-    keyWords: string;
+    must_Words: string;
+    nice_Words: string;
+    notes?: string;
 };
 
-const MoreDetailsDialog = ({ open, onClose, jobDescription, keyWords }: MoreDetailsDialogProps) => {
+const MoreDetailsDialog = ({ open, onClose, jobDescription, must_Words, nice_Words, notes }: MoreDetailsDialogProps) => {
     const [scroll] = useState<DialogProps['scroll']>('paper');
 
     const descriptionElementRef = useRef<HTMLElement>(null);
@@ -41,9 +43,18 @@ const MoreDetailsDialog = ({ open, onClose, jobDescription, keyWords }: MoreDeta
                     ref={descriptionElementRef}
                     tabIndex={-1}
                 >
+                    {notes && (
+                        <>
+                            <p>Notes:</p>
+                            {notes}
+                        </>
+                    )}
+                    <p >Job Description:</p>
                     {jobDescription}
-                    <br />
-                    {keyWords}
+                    <p >"Must have" keywords:</p>
+                    {must_Words}
+                    <p>"Nice to have" keywords:</p>
+                    {nice_Words}
                 </DialogContentText>
             </DialogContent>
             <DialogActions>

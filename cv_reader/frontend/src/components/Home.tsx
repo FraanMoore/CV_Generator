@@ -53,9 +53,7 @@ const Home = () => {
                         role={app.role}
                         jobURL={app.job_url}
                         status={app.status ?? "draft"}
-                        notes={app.notes || "Sin notas"}
-                        jobDescription={"Sin descripción"}
-                        keyWords={""}
+                        notes={app.notes || "No notes"}
                         id={app.id}
                     />
                 ))}

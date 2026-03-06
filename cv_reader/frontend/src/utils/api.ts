@@ -8,7 +8,10 @@ export type Application = {
   job_url: string;
   status?: 'applied' | 'interviewing' | 'offer' | 'rejected' | 'draft';
   notes?: string;
+  must_keywords?: string;
+  nice_keywords?: string;
   output_dir?: string;
+  job_description?: string;
 };
 
 export async function fetchApplications(): Promise<Application[]> {

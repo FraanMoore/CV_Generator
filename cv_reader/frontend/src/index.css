@@ -25,6 +25,9 @@
  body{
     background: var(--color-background);
  }
+ p{
+    font-weight: bold;
+ }
  
  /* color status */
  :root {

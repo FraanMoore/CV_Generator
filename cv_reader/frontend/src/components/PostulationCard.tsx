@@ -7,7 +7,7 @@ import Stack from '@mui/material/Stack';
 import * as React from 'react';
 import { useState } from 'react';
 import styled from 'styled-components';
-import { fetchApplicationDescription } from '../utils/api';
+import { fetchApplication, fetchApplicationDescription } from '../utils/api';
 import BaseTypography from '../utils/BaseTypography';
 import MoreDetailsDialog from './MoreDetailsDialog';
 import StatusButton from './StatusButton';
@@ -18,8 +18,6 @@ export type PostulationCardProps = {
     jobURL: string;
     status: 'applied' | 'interviewing' | 'offer' | 'rejected' | 'draft';
     notes: string;
-    jobDescription: string;
-    keyWords: string;
     id: number;
 };
 
@@ -28,21 +26,25 @@ const PostulationCard = ({
     role,
     jobURL,
     status,
-    keyWords,
     notes,
     id
 }: PostulationCardProps) => {
     const [open, setOpen] = useState(false);
-    const [jobDescription, setJobDescription] = useState<string>("Loading job description...");
+    const [jobDescription, setJobDescription] = useState<string>('');
+    const [mustKeyWords, setMustKeyWords] = useState<string>('');
+    const [niceKeyWords, setNiceKeyWords] = useState<string>('');
     const [loading, setLoading] = useState(false);
 
     const handleMoreDetails = async () => {
         setOpen(true);
-        if (!jobDescription || jobDescription === "Loading job description...") {
+        if (!jobDescription) {
             try {
                 setLoading(true);
                 const text = await fetchApplicationDescription(id);
+                const keyWords = await fetchApplication(id);
                 setJobDescription(text);
+                setMustKeyWords(`${keyWords.must_keywords || ''}`);
+                setNiceKeyWords(`${keyWords.nice_keywords || ''}`);
             } catch {
                 setJobDescription("Error loading job description");
             } finally {
@@ -93,7 +95,7 @@ const PostulationCard = ({
     return (
         <Container className="postulation-card-container">
             <StyledCard>{card}</StyledCard>
-            <MoreDetailsDialog open={open} onClose={handleClose} jobDescription={jobDescription} keyWords={keyWords} />
+            <MoreDetailsDialog open={open} onClose={handleClose} jobDescription={jobDescription} nice_Words={niceKeyWords} must_Words={mustKeyWords} notes={notes} />
         </Container>
     );
 
