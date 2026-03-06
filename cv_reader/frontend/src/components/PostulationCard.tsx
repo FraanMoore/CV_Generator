@@ -1,13 +1,12 @@
-import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
 import Link from '@mui/material/Link';
+import Stack from '@mui/material/Stack';
 import * as React from 'react';
 import { useState } from 'react';
 import styled from 'styled-components';
-import { useLayout } from '../hooks/useLayout';
 import BaseTypography from '../utils/BaseTypography';
 import MoreDetailsDialog from './MoreDetailsDialog';
 import StatusButton from './StatusButton';
@@ -31,7 +30,6 @@ const PostulationCard = ({
     jobDescription,
     keyWords
 }: PostulationCardProps) => {
-    const { isMobile } = useLayout();
     const [open, setOpen] = useState(false);
 
     const handleMoreDetails = () => {
@@ -68,10 +66,8 @@ const PostulationCard = ({
     );
 
     return (
-        <Container>
-            <CardContainer $isMobile={isMobile}>
-                <StyledCard $isMobile={isMobile} variant="outlined">{card}</StyledCard>
-            </CardContainer>
+        <Container className="postulation-card-container">
+            <StyledCard>{card}</StyledCard>
             <MoreDetailsDialog open={open} onClose={handleClose} jobDescription={jobDescription} keyWords={keyWords} />
         </Container>
     );
@@ -80,17 +76,20 @@ const PostulationCard = ({
 
 export default PostulationCard;
 
-const Container = styled(Box)`
-    margin-top: 80px;
+const Container = styled(Stack)`
+    width: 100%;
+    max-width: 350px;
+    max-height: 302px;
+    box-sizing: border-box;
 `;
-const CardContainer = styled(Box) <{ $isMobile: boolean }> `
-    display: flex;
-    justify-content: ${props => props.$isMobile ? 'center' : 'flex-start'};
-    align-items: center;
-`;
-const StyledCard = styled(Card) <{ $isMobile: boolean }>`
-    width: ${props => props.$isMobile ? '100%' : '30%'};
+
+const StyledCard = styled(Card)`
     margin: 20px;
+    .MuiTypography-root{
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
+    }
 `;
 
 const RoleTypography = styled(BaseTypography)`

@@ -99,7 +99,6 @@ const Navbar = (props: Props) => {
             <nav>
                 <StyledDrawer
                     container={container}
-                    variant="temporary"
                     open={mobileOpen}
                     onClose={handleDrawerToggle}
                     ModalProps={{
@@ -136,6 +135,7 @@ const Container = styled(Box)`
 `;
 
 const StyledAppBar = styled(AppBar)`
+    position: sticky;
     background-color: var(--color-primary-light);
 `;
 
