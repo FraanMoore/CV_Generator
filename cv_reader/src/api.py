@@ -3,7 +3,7 @@ from __future__ import annotations
 from pathlib import Path
 from typing import List, Optional
 
-from fastapi import FastAPI, UploadFile, File, Form, HTTPException
+from fastapi import FastAPI, UploadFile, File, Form, HTTPException, Body
 from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -136,6 +136,50 @@ async def get_application(app_id: int):
         raise HTTPException(status_code=404, detail="Application not found")
     return rows[app_id]
 
+@app.put("/applications/{app_id}")
+async def update_application(app_id: int, data: dict = Body(...)):
+    """
+    Updated some fields of an application in index.csv:
+    role, company, job_url, status, notes.
+    """
+    rows = _read_index_rows()
+    if app_id < 0 or app_id >= len(rows):
+        raise HTTPException(status_code=404, detail="Application not found")
+
+    row = rows[app_id]
+
+    for field in data:
+        if field in row and data[field] is not None:
+            row[field] = data[field]
+
+    import csv
+
+    for r in rows:
+        if "id" in r:
+            del r["id"]
+
+    fieldnames = [
+        "timestamp",
+        "company",
+        "role",
+        "lang",
+        "job_text_path",
+        "job_url",
+        "output_dir",
+        "files_generated",
+        "must_keywords",
+        "nice_keywords",
+        "resp_keywords",
+        "status",
+        "notes",
+    ]
+
+    with INDEX_CSV_PATH.open("w", newline="", encoding="utf-8") as f:
+        writer = csv.DictWriter(f, fieldnames=fieldnames)
+        writer.writeheader()
+        writer.writerows(rows)
+
+    return row
 
 @app.get("/download/{timestamp}/{company}/{role}/{filename}")
 async def download_docx(
