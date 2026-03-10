@@ -7,13 +7,17 @@ import PostulationCard, { type PostulationCardProps } from '../PostulationCard';
 const TestComponent = (props: Partial<PostulationCardProps>) => {
     return (
         <PostulationCard
-            company="Default Company"
-            role="Default Role"
-            jobURL="https://example.com"
-            status="applied"
-            notes="No notes available"
-            jobDescription='No description available'
-            keyWords='keyword1, keyword2'
+            application={{
+                id: 1,
+                company: 'Default Company',
+                role: 'Default Role',
+                job_url: 'http://example.com',
+                status: 'applied',
+                notes: 'Some notes',
+                timestamp: new Date().toISOString(),
+            }}
+            onUpdated={async () => { }}
+            onDeleted={() => { }}
             {...props}
         />
     );

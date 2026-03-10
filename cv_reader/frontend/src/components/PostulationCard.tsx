@@ -19,7 +19,7 @@ export type PostulationCardProps = {
         id: number,
         data: Partial<Pick<Application, 'company' | 'role' | 'job_url' | 'status' | 'notes'>>
     ) => Promise<void>;
-    onDeleted?: (id: number) => void;
+    onDeleted: (id: number) => void;
 };
 
 const PostulationCard = ({

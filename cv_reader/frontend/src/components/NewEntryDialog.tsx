@@ -44,7 +44,7 @@ const NewEntryDialog = ({ open, onClose, onCreate }: NewEntryDialogProps) => {
             setRole('');
             setCompany('');
             setJobURL('');
-            setNotes('');
+            setNotes('No notes');
             setJobDescription('');
             setUseAI(true);
         }
