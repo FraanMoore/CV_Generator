@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import styled from "styled-components";
-import { fetchApplications, updateApplication, type Application } from "../utils/api";
+import { fetchApplications, updateApplication, uploadJobText, type Application } from "../utils/api";
 import Navbar from "./Navbar";
+import type { NewEntryData } from "./NewEntryDialog";
 import TablePaginationDemo from "./Pagination";
 import PostulationCard from "./PostulationCard";
 
@@ -20,6 +21,32 @@ const Home = () => {
         );
     };
 
+    const handleCreateEntry = async (data: NewEntryData) => {
+        try {
+            await uploadJobText({
+                company: data.company,
+                role: data.role,
+                lang: 'both',
+                job_url: data.jobURL,
+                job_text: data.jobDescription,
+                ai: data.AIEnabled,
+                ai_model: 'gpt-4.1-mini',
+                status: data.status,
+                notes: data.notes,
+            });
+
+            const apps = await fetchApplications();
+            setApplications(apps);
+        } catch (e) {
+            console.error("Error creating application", e);
+            setError("Error creating job application");
+        }
+    };
+
+    const handleCardDeleted = () => {
+        fetchApplications().then(setApplications).catch(() => setError("Error refreshing applications after deletion"));
+    }
+
     useEffect(() => {
         const load = async () => {
             try {
@@ -37,7 +64,7 @@ const Home = () => {
     if (loading) {
         return (
             <>
-                <Navbar />
+                <Navbar onCreateEntry={handleCreateEntry} />
                 <p>Cargando...</p>
             </>
         );
@@ -46,7 +73,7 @@ const Home = () => {
     if (error) {
         return (
             <>
-                <Navbar />
+                <Navbar onCreateEntry={handleCreateEntry} />
                 <p>{error}</p>
             </>
         );
@@ -54,13 +81,14 @@ const Home = () => {
 
     return (
         <>
-            <Navbar />
+            <Navbar onCreateEntry={handleCreateEntry} />
             <CardWrapper>
                 {applications.map((app) => (
                     <PostulationCard
                         key={app.id}
                         application={app}
                         onUpdated={handleUpdateApplication}
+                        onDeleted={handleCardDeleted}
                     />
                 ))}
             </CardWrapper>

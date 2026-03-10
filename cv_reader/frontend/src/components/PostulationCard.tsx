@@ -19,11 +19,13 @@ export type PostulationCardProps = {
         id: number,
         data: Partial<Pick<Application, 'company' | 'role' | 'job_url' | 'status' | 'notes'>>
     ) => Promise<void>;
+    onDeleted?: (id: number) => void;
 };
 
 const PostulationCard = ({
     application,
-    onUpdated
+    onUpdated,
+    onDeleted
 }: PostulationCardProps) => {
     const [openDetails, setOpenDetails] = useState(false);
     const [openEdit, setOpenEdit] = useState(false);
@@ -71,12 +73,20 @@ const PostulationCard = ({
             status: data.status,
             notes: data.notes
         });
-    }
+    };
+
     const handleStatusChange = async (newStatus: status) => {
         await onUpdated(id, {
             status: newStatus
         });
-    }
+    };
+
+    const handleDeleted = (deletedId: number) => {
+        if (onDeleted) {
+            onDeleted(deletedId);
+        }
+    };
+
     const card = (
         <React.Fragment>
             <CardContent>
@@ -121,6 +131,7 @@ const PostulationCard = ({
                 open={openEdit}
                 onClose={handleCloseEdit}
                 onEdit={handleEditSave}
+                onDelete={handleDeleted}
             />
         </Container>
     );

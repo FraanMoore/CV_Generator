@@ -4,8 +4,11 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Switch from '@mui/material/Switch';
 import TextField from '@mui/material/TextField';
 import * as React from 'react';
+import { useState } from 'react';
 import styled from 'styled-components';
 import StatusButton, { type status } from './StatusButton';
 
@@ -16,6 +19,7 @@ export type NewEntryData = {
     status: status;
     notes: string;
     jobDescription: string;
+    AIEnabled: boolean;
 };
 
 type NewEntryDialogProps = {
@@ -25,20 +29,38 @@ type NewEntryDialogProps = {
 };
 
 const NewEntryDialog = ({ open, onClose, onCreate }: NewEntryDialogProps) => {
-    const [status, setStatus] = React.useState<NewEntryData['status']>('draft');
+    const [status, setStatus] = useState<NewEntryData['status']>('draft');
+    const [role, setRole] = useState('');
+    const [company, setCompany] = useState('');
+    const [jobURL, setJobURL] = useState('');
+    const [notes, setNotes] = useState('');
+    const [jobDescription, setJobDescription] = useState('');
+    const [useAI, setUseAI] = useState(true);
+
+
+    React.useEffect(() => {
+        if (open) {
+            setStatus('draft');
+            setRole('');
+            setCompany('');
+            setJobURL('');
+            setNotes('');
+            setJobDescription('');
+            setUseAI(true);
+        }
+    }, [open]);
 
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        const formData = new FormData(event.currentTarget);
-        const formJson = Object.fromEntries(Array.from(formData.entries()) as [string, string][]);
 
         const payload: NewEntryData = {
-            role: formJson.role || '',
-            company: formJson.company || '',
-            jobURL: formJson.jobURL || '',
+            role,
+            company,
+            jobURL,
             status,
-            notes: formJson.notes || '',
-            jobDescription: formJson.jobDescription || ''
+            notes,
+            jobDescription,
+            AIEnabled: useAI,
         };
 
         onCreate(payload);
@@ -65,6 +87,8 @@ const NewEntryDialog = ({ open, onClose, onCreate }: NewEntryDialogProps) => {
                             type="text"
                             fullWidth
                             variant="standard"
+                            value={role}
+                            onChange={(e) => setRole(e.target.value)}
                         />
                         <TextField
                             required
@@ -75,6 +99,8 @@ const NewEntryDialog = ({ open, onClose, onCreate }: NewEntryDialogProps) => {
                             type="text"
                             fullWidth
                             variant="standard"
+                            value={company}
+                            onChange={(e) => setCompany(e.target.value)}
                         />
                         <TextField
                             required
@@ -85,6 +111,8 @@ const NewEntryDialog = ({ open, onClose, onCreate }: NewEntryDialogProps) => {
                             type="url"
                             fullWidth
                             variant="standard"
+                            value={jobURL}
+                            onChange={(e) => setJobURL(e.target.value)}
                         />
                         <TextField
                             margin="dense"
@@ -96,6 +124,8 @@ const NewEntryDialog = ({ open, onClose, onCreate }: NewEntryDialogProps) => {
                             variant="standard"
                             multiline
                             minRows={2}
+                            value={notes}
+                            onChange={(e) => setNotes(e.target.value)}
                         />
                         <TextField
                             required
@@ -108,12 +138,25 @@ const NewEntryDialog = ({ open, onClose, onCreate }: NewEntryDialogProps) => {
                             variant="standard"
                             multiline
                             minRows={4}
+                            value={jobDescription}
+                            onChange={(e) => setJobDescription(e.target.value)}
                         />
                     </form>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={onClose}>Cancel</Button>
-                    <Button type="submit" form="new-entry-form">
+                    <FormControlLabel
+                        control={
+
+                            <Switch
+                                checked={useAI}
+                                onChange={(e) => setUseAI(e.target.checked)}
+                                color="secondary"
+                            />
+                        }
+                        label={useAI ? "IA Enabled" : "IA Disabled"}
+                    />
+                    <Button onClick={onClose} color='secondary'>Cancel</Button>
+                    <Button type="submit" form="new-entry-form" color='secondary'>
                         Create
                     </Button>
                 </DialogActions>

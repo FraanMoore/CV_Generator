@@ -7,15 +7,14 @@ import CssBaseline from '@mui/material/CssBaseline';
 import Divider from '@mui/material/Divider';
 import Drawer from '@mui/material/Drawer';
 import IconButton from '@mui/material/IconButton';
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
+import { default as List, default as ListItem } from '@mui/material/List';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
 import Toolbar from '@mui/material/Toolbar';
-import * as React from 'react';
+import { useState } from 'react';
 import { useLayout } from '../hooks/useLayout';
 import BaseTypography from '../utils/BaseTypography';
-import NewEntryDialog, { NewEntryButton } from './NewEntryDialog';
+import NewEntryDialog, { NewEntryButton, type NewEntryData } from './NewEntryDialog';
 
 interface Props {
     /**
@@ -23,15 +22,16 @@ interface Props {
      * You won't need it on your project.
      */
     window?: () => Window;
+    onCreateEntry?: (data: NewEntryData) => void;
 }
 
 const drawerWidth = '100%';
 const navItems = ['Home', 'Postulations', 'New Entry'];
 
 const Navbar = (props: Props) => {
-    const { window } = props;
-    const [mobileOpen, setMobileOpen] = React.useState(false);
-    const [newEntryOpen, setNewEntryOpen] = React.useState(false);
+    const { window, onCreateEntry } = props;
+    const [mobileOpen, setMobileOpen] = useState(false);
+    const [newEntryOpen, setNewEntryOpen] = useState(false);
     const { isMobile } = useLayout();
 
     const handleDrawerToggle = () => {
@@ -40,6 +40,11 @@ const Navbar = (props: Props) => {
 
     const handleOpenNewEntry = () => setNewEntryOpen(true);
     const handleCloseNewEntry = () => setNewEntryOpen(false);
+
+    const handleCreateNewEntry = (data: NewEntryData) => {
+        onCreateEntry?.(data);
+        setNewEntryOpen(false);
+    };
 
     const drawer = (
         <DrawerContainer onClick={handleDrawerToggle}>
@@ -95,7 +100,7 @@ const Navbar = (props: Props) => {
                     </ButtonBox>
                 </Toolbar>
             </StyledAppBar>
-            <NewEntryDialog open={newEntryOpen} onClose={handleCloseNewEntry} onCreate={() => { }} />
+            <NewEntryDialog open={newEntryOpen} onClose={handleCloseNewEntry} onCreate={handleCreateNewEntry} />
             <nav>
                 <StyledDrawer
                     container={container}

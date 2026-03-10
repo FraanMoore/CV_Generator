@@ -1,4 +1,6 @@
+import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 import Button from '@mui/material/Button';
+import Chip from '@mui/material/Chip';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
@@ -7,7 +9,7 @@ import TextField from '@mui/material/TextField';
 import * as React from 'react';
 import { useState, type FormEvent } from 'react';
 import styled from 'styled-components';
-import type { Application } from '../utils/api';
+import { deleteApplication, type Application } from '../utils/api';
 import StatusButton, { type status } from './StatusButton';
 
 export type NewSavedData = {
@@ -23,13 +25,12 @@ type EditDialogProps = {
     onClose: () => void;
     application: Application | null;
     onEdit: (data: NewSavedData) => void;
+    onDelete?: (id: number) => void;
 };
 
-const EditDialog = ({ open, onClose, application, onEdit }: EditDialogProps) => {
+const EditDialog = ({ open, onClose, application, onEdit, onDelete }: EditDialogProps) => {
     const [status, setStatus] = useState<NewSavedData['status']>(
-        application?.status && ['applied', 'interviewing', 'offer', 'rejected', 'draft'].includes(application.status)
-            ? (application.status as NewSavedData['status'])
-            : 'draft'
+        application?.status as NewSavedData['status'] ?? 'draft'
     );
 
     const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
@@ -49,6 +50,15 @@ const EditDialog = ({ open, onClose, application, onEdit }: EditDialogProps) => 
         };
 
         onEdit(payload);
+        onClose();
+    };
+
+    const handleDelete = async () => {
+        if (!application) return;
+        await deleteApplication(application.id);
+        if (onDelete) {
+            onDelete(application.id);
+        }
         onClose();
     };
 
@@ -113,6 +123,14 @@ const EditDialog = ({ open, onClose, application, onEdit }: EditDialogProps) => 
                     </form>
                 </DialogContent>
                 <DialogActions>
+                    <Chip
+                        label="Delete"
+                        onClick={handleDelete}
+                        onDelete={handleDelete}
+                        deleteIcon={<DeleteOutlinedIcon />}
+                        variant="outlined"
+                        color='error'
+                    />
                     <Button onClick={onClose}>Cancel</Button>
                     <Button type="submit" form="edit-entry-form">
                         Save
