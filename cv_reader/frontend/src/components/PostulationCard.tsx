@@ -9,6 +9,7 @@ import { useState } from 'react';
 import styled from 'styled-components';
 import { fetchApplication, fetchApplicationDescription, type Application } from '../utils/api';
 import BaseTypography from '../utils/BaseTypography';
+import LoadingIndicator from '../utils/LoadingIndicator';
 import EditDialog, { type NewSavedData } from './EditDialog';
 import MoreDetailsDialog from './MoreDetailsDialog';
 import StatusButton, { type status } from './StatusButton';
@@ -117,7 +118,7 @@ const PostulationCard = ({
     if (loading) {
         return (
             <>
-                <p>Cargando...</p>
+                <LoadingIndicator />
             </>
         );
     }

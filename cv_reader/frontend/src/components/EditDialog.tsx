@@ -132,7 +132,7 @@ const EditDialog = ({ open, onClose, application, onEdit, onDelete }: EditDialog
                         color='error'
                     />
                     <Button onClick={onClose}>Cancel</Button>
-                    <Button type="submit" form="edit-entry-form">
+                    <Button type="submit" form="edit-entry-form" loadingIndicator>
                         Save
                     </Button>
                 </DialogActions>

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import styled from "styled-components";
 import { fetchApplications, updateApplication, uploadJobText, type Application } from "../utils/api";
+import LoadingIndicator from "../utils/LoadingIndicator";
 import Navbar from "./Navbar";
 import type { NewEntryData } from "./NewEntryDialog";
 import TablePaginationDemo from "./Pagination";
@@ -65,7 +66,7 @@ const Home = () => {
         return (
             <>
                 <Navbar onCreateEntry={handleCreateEntry} />
-                <p>Cargando...</p>
+                <LoadingIndicator />
             </>
         );
     }

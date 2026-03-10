@@ -2,7 +2,6 @@ import MenuIcon from '@mui/icons-material/Menu';
 import { styled } from '@mui/material';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import Divider from '@mui/material/Divider';
 import Drawer from '@mui/material/Drawer';
@@ -26,7 +25,7 @@ interface Props {
 }
 
 const drawerWidth = '100%';
-const navItems = ['Home', 'Postulations', 'New Entry'];
+const navItems = ['New Entry'];
 
 const Navbar = (props: Props) => {
     const { window, onCreateEntry } = props;
@@ -56,7 +55,7 @@ const Navbar = (props: Props) => {
                 {navItems.map((item) => (
                     <ListItem key={item} disablePadding>
                         <DrawerListItemButton>
-                            <ListItemText primary={item} />
+                            <ListItemText primary={item} onClick={handleOpenNewEntry} />
                         </DrawerListItemButton>
                     </ListItem>
                 ))}
@@ -87,15 +86,9 @@ const Navbar = (props: Props) => {
                     </Title>
                     <ButtonBox $isMobile={isMobile}>
                         {navItems.map((item) => (
-                            item === 'New Entry' ? (
-                                <NewEntryButton key={item} onClick={handleOpenNewEntry}>
-                                    {item}
-                                </NewEntryButton>
-                            ) : (
-                                <StyledButton key={item}>
-                                    {item}
-                                </StyledButton>
-                            )
+                            <NewEntryButton key={item} onClick={handleOpenNewEntry}>
+                                {item}
+                            </NewEntryButton>
                         ))}
                     </ButtonBox>
                 </Toolbar>
@@ -157,13 +150,6 @@ const Title = styled(BaseTypography) <{ $isMobile: boolean }>`
     flex-grow: 1;
     display: ${props => (props.$isMobile ? 'none' : 'block')};
     font-size: var(--font-size-h6);
-`;
-
-const StyledButton = styled(Button)`
-    color: var(--color-font-primary);
-    &:hover {
-        border: 1px solid var(--color-primary-dark);
-    }
 `;
 
 const StyledDrawer = styled(Drawer) <{ $isMobile: boolean }>`
