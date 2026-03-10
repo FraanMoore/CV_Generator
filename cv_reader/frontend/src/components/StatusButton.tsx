@@ -5,22 +5,30 @@ import Select, { type SelectChangeEvent } from '@mui/material/Select';
 import * as React from 'react';
 import styled from 'styled-components';
 
+export type status = 'applied' | 'interviewing' | 'offer' | 'rejected' | 'draft';
+
 export type StatusButtonProps = {
-    jobStatus: 'applied' | 'interviewing' | 'offer' | 'rejected' | 'draft' | string;
-    onChangeStatus?: (status: 'applied' | 'interviewing' | 'offer' | 'rejected' | 'draft') => void;
+    jobStatus: status | string;
+    onChangeStatus?: (status: status) => void;
 };
 
-type status = 'applied' | 'interviewing' | 'offer' | 'rejected' | 'draft';
 
 const StatusButton = ({ jobStatus, onChangeStatus }: StatusButtonProps) => {
     const [status, setStatus] = React.useState(jobStatus);
 
+
+    React.useEffect(() => {
+        const valid: status[] = ['applied', 'interviewing', 'offer', 'rejected', 'draft'];
+        const next = valid.includes(jobStatus as status)
+            ? (jobStatus as status)
+            : 'draft';
+        setStatus(next);
+    }, [jobStatus]);
+
     const handleChange = (event: SelectChangeEvent) => {
         const newStatus = event.target.value;
         setStatus(newStatus);
-        if (onChangeStatus) {
-            onChangeStatus(newStatus as status);
-        }
+        onChangeStatus?.(newStatus as status);
     };
 
     return (
@@ -47,12 +55,8 @@ export default StatusButton;
 const StyledFormControl = styled(FormControl) <{ $status: status }>`
 &.MuiFormControl-root {
     margin-top: 12px;
-
-    background-color: var(--bg-${props => props.$status});
-    color: var(--color-${props => props.$status});
 }
 .MuiOutlinedInput-root{
-    background-color: var(--bg-${props => props.$status});
     color: var(--color-${props => props.$status});
     }
 
@@ -63,5 +67,7 @@ const StyledFormControl = styled(FormControl) <{ $status: status }>`
     &:hover .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline {
     border-color: var(--color-${props => props.$status});
   }
+    .MuiFormLabel-root{
+    color: var(--color-${props => props.$status});
 }
 `;

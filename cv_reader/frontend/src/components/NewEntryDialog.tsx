@@ -7,13 +7,13 @@ import DialogTitle from '@mui/material/DialogTitle';
 import TextField from '@mui/material/TextField';
 import * as React from 'react';
 import styled from 'styled-components';
-import StatusButton from './StatusButton';
+import StatusButton, { type status } from './StatusButton';
 
 export type NewEntryData = {
     role: string;
     company: string;
     jobURL: string;
-    status: 'applied' | 'interviewing' | 'offer' | 'rejected' | 'draft';
+    status: status;
     notes: string;
     jobDescription: string;
 };

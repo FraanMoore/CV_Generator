@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import styled from "styled-components";
-import { fetchApplications, type Application } from "../utils/api";
+import { fetchApplications, updateApplication, type Application } from "../utils/api";
 import Navbar from "./Navbar";
 import TablePaginationDemo from "./Pagination";
 import PostulationCard from "./PostulationCard";
@@ -10,13 +10,23 @@ const Home = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
+    const handleUpdateApplication = async (
+        id: number,
+        data: Partial<Pick<Application, "company" | "role" | "job_url" | "status" | "notes">>
+    ) => {
+        const updated = await updateApplication(id, data);
+        setApplications(prev =>
+            prev.map(app => (app.id === id ? { ...app, ...updated } : app))
+        );
+    };
+
     useEffect(() => {
         const load = async () => {
             try {
                 const data = await fetchApplications();
                 setApplications(data);
             } catch {
-                setError("Error cargando aplicaciones");
+                setError("Error uploading job application");
             } finally {
                 setLoading(false);
             }
@@ -49,12 +59,8 @@ const Home = () => {
                 {applications.map((app) => (
                     <PostulationCard
                         key={app.id}
-                        company={app.company}
-                        role={app.role}
-                        jobURL={app.job_url}
-                        status={app.status ?? "draft"}
-                        notes={app.notes || "No notes"}
-                        id={app.id}
+                        application={app}
+                        onUpdated={handleUpdateApplication}
                     />
                 ))}
             </CardWrapper>

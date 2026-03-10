@@ -7,36 +7,34 @@ import Stack from '@mui/material/Stack';
 import * as React from 'react';
 import { useState } from 'react';
 import styled from 'styled-components';
-import { fetchApplication, fetchApplicationDescription } from '../utils/api';
+import { fetchApplication, fetchApplicationDescription, type Application } from '../utils/api';
 import BaseTypography from '../utils/BaseTypography';
+import EditDialog, { type NewSavedData } from './EditDialog';
 import MoreDetailsDialog from './MoreDetailsDialog';
-import StatusButton from './StatusButton';
+import StatusButton, { type status } from './StatusButton';
 
 export type PostulationCardProps = {
-    company: string;
-    role: string;
-    jobURL: string;
-    status: 'applied' | 'interviewing' | 'offer' | 'rejected' | 'draft';
-    notes: string;
-    id: number;
+    application: Application;
+    onUpdated: (
+        id: number,
+        data: Partial<Pick<Application, 'company' | 'role' | 'job_url' | 'status' | 'notes'>>
+    ) => Promise<void>;
 };
 
 const PostulationCard = ({
-    company,
-    role,
-    jobURL,
-    status,
-    notes,
-    id
+    application,
+    onUpdated
 }: PostulationCardProps) => {
-    const [open, setOpen] = useState(false);
+    const [openDetails, setOpenDetails] = useState(false);
+    const [openEdit, setOpenEdit] = useState(false);
     const [jobDescription, setJobDescription] = useState<string>('');
     const [mustKeyWords, setMustKeyWords] = useState<string>('');
     const [niceKeyWords, setNiceKeyWords] = useState<string>('');
     const [loading, setLoading] = useState(false);
+    const { id, company, role, job_url, status, notes } = application;
 
     const handleMoreDetails = async () => {
-        setOpen(true);
+        setOpenDetails(true);
         if (!jobDescription) {
             try {
                 setLoading(true);
@@ -53,10 +51,32 @@ const PostulationCard = ({
         }
     };
 
-    const handleClose = () => {
-        setOpen(false);
+    const handleCloseDetails = () => {
+        setOpenDetails(false);
+    }
+
+    const handleEdit = () => {
+        setOpenEdit(true);
     };
 
+    const handleCloseEdit = () => {
+        setOpenEdit(false);
+    };
+
+    const handleEditSave = async (data: NewSavedData) => {
+        await onUpdated(id, {
+            company: data.company,
+            role: data.role,
+            job_url: data.jobURL,
+            status: data.status,
+            notes: data.notes
+        });
+    }
+    const handleStatusChange = async (newStatus: status) => {
+        await onUpdated(id, {
+            status: newStatus
+        });
+    }
     const card = (
         <React.Fragment>
             <CardContent>
@@ -66,10 +86,10 @@ const PostulationCard = ({
                 <CompanyTypography>
                     {company}
                 </CompanyTypography>
-                <StatusButton jobStatus={status} />
+                <StatusButton jobStatus={status ?? 'draft'} onChangeStatus={handleStatusChange} />
                 <URLNotesTypography>
-                    {jobURL &&
-                        <Link onClick={() => window.open(jobURL, '_blank')}>
+                    {job_url &&
+                        <Link onClick={() => window.open(job_url, '_blank')}>
                             URL job offer
                         </Link>
                     }
@@ -79,7 +99,7 @@ const PostulationCard = ({
             </CardContent>
             <CardActions>
                 <StyledButton size="small" onClick={handleMoreDetails}>More details</StyledButton>
-                <StyledButton size="small" onClick={handleMoreDetails}>Edit</StyledButton>
+                <StyledButton size="small" onClick={handleEdit}>Edit</StyledButton>
             </CardActions>
         </React.Fragment>
     );
@@ -95,7 +115,13 @@ const PostulationCard = ({
     return (
         <Container className="postulation-card-container">
             <StyledCard>{card}</StyledCard>
-            <MoreDetailsDialog open={open} onClose={handleClose} jobDescription={jobDescription} nice_Words={niceKeyWords} must_Words={mustKeyWords} notes={notes} />
+            <MoreDetailsDialog open={openDetails} onClose={handleCloseDetails} jobDescription={jobDescription} nice_Words={niceKeyWords} must_Words={mustKeyWords} notes={notes} />
+            <EditDialog
+                application={application}
+                open={openEdit}
+                onClose={handleCloseEdit}
+                onEdit={handleEditSave}
+            />
         </Container>
     );
 
