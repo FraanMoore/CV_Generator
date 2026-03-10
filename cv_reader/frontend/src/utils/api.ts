@@ -73,3 +73,18 @@ export async function fetchApplicationDescription(id: number): Promise<string> {
   const data = await res.json();
   return data.job_description;
 }
+
+export async function updateApplication(
+  id: number,
+  data: Partial<Pick<Application, 'company' | 'role' | 'job_url' | 'status' | 'notes'>>
+): Promise<Application> {
+  const res = await fetch(`${BASE_URL}/applications/${id}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  });
+  if (!res.ok) {
+    throw new Error('Error updating application');
+  }
+  return res.json();
+}
