@@ -1,4 +1,4 @@
-const BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
+export const BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
 
 export type Application = {
   id: number;
@@ -24,6 +24,12 @@ export type UploadJobPayload = {
   job_text?: string;
   status?: Application['status'];
   notes?: string;
+};
+
+export type ApplicationFile = {
+  name: string;
+  path: string;
+  size: number;
 };
 
 export async function fetchApplications(): Promise<Application[]> {
@@ -120,4 +126,13 @@ export async function createApplication(
     throw new Error(text || 'Error creating application');
   }
   return res.json();
+}
+
+export async function fetchApplicationFiles(appId: number): Promise<ApplicationFile[]> {
+  const res = await fetch(`${BASE_URL}/applications/${appId}/files`);
+  if (!res.ok) {
+    throw new Error('Error fetching application files');
+  }
+  const data = await res.json();
+  return data.files ?? [];
 }

@@ -10,6 +10,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from .service import generate_application
 from .index_log import ApplicationRecord, append_to_index_csv, append_to_index_jsonl
 from datetime import datetime
+import os
 
 BASE_DIR = Path(__file__).resolve().parents[1]
 CV_READER_DIR = BASE_DIR
@@ -279,3 +280,59 @@ async def download_docx(
         media_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
         filename=filename,
     )
+
+@app.get("/applications/{app_id}/files")
+async def list_application_files(app_id: int):
+    """List of the files generated for an application.
+
+    Used the `output_dir` field from index.csv to locate the folder and return
+    the file names relative to that folder.
+    """
+    rows = _read_index_rows()
+    if app_id < 0 or app_id >= len(rows):
+        raise HTTPException(status_code=404, detail="Application not found")
+
+    row = rows[app_id]
+    output_dir_str = row.get("output_dir")
+    if not output_dir_str:
+        raise HTTPException(status_code=404, detail="output_dir not set for this application")
+
+    output_dir = Path(output_dir_str)
+    if not output_dir.exists() or not output_dir.is_dir():
+        raise HTTPException(status_code=404, detail="Output directory not found")
+
+    files: list[dict] = []
+
+    for path in output_dir.iterdir():
+        if path.is_file():
+            files.append({
+                "name": path.name,
+                "path": str(path.resolve()),
+                "size": os.path.getsize(path),
+            })
+
+    return {"files": files}
+
+@app.get("/applications/{app_id}/files/{filename}")
+async def download_application_file(app_id: int, filename: str):
+    """Devuelve un archivo concreto de una aplicación dada por su id.
+
+    Se basa en el campo `output_dir` de index.csv y el nombre de archivo
+    que llega en la URL.
+    """
+    rows = _read_index_rows()
+    if app_id < 0 or app_id >= len(rows):
+        raise HTTPException(status_code=404, detail="Application not found")
+
+    row = rows[app_id]
+    output_dir_str = row.get("output_dir")
+    if not output_dir_str:
+        raise HTTPException(status_code=404, detail="output_dir not set for this application")
+
+    output_dir = Path(output_dir_str)
+    file_path = output_dir / filename
+
+    if not file_path.exists() or not file_path.is_file():
+        raise HTTPException(status_code=404, detail="File not found")
+
+    return FileResponse(path=str(file_path), filename=filename)
