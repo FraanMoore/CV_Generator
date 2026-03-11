@@ -11,6 +11,7 @@ from .service import generate_application
 from .index_log import ApplicationRecord, append_to_index_csv, append_to_index_jsonl
 from datetime import datetime
 import os
+import re
 
 BASE_DIR = Path(__file__).resolve().parents[1]
 CV_READER_DIR = BASE_DIR
@@ -29,6 +30,68 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+def _slugify(value: str) -> str:
+    value = value.strip().replace(" ", "_")
+    return re.sub(r"[^A-Za-z0-9_-]", "_", value)
+
+def _update_or_append_index(rec: ApplicationRecord) -> None:
+    """Update existing row for same (company, role, job_url) or append if new.
+
+    This avoids having two rows for the same application when status changes
+    between draft and the selected value during creation.
+    """
+    import csv
+
+    rows: list[dict] = []
+    if INDEX_CSV_PATH.exists():
+        with INDEX_CSV_PATH.open(newline="", encoding="utf-8") as f:
+            reader = csv.DictReader(f)
+            rows = list(reader)
+
+    idx_to_update: Optional[int] = None
+    for i, row in enumerate(rows):
+        if (
+            row.get("company") == rec.company
+            and row.get("role") == rec.role
+            and row.get("job_url", "") == rec.job_url
+        ):
+            idx_to_update = i
+            break
+
+    rec_dict = rec.__dict__.copy()
+
+    if idx_to_update is not None:
+        original = rows[idx_to_update]
+        if original.get("timestamp"):
+            rec_dict["timestamp"] = original["timestamp"]
+        if original.get("job_text_path"):
+            rec_dict["job_text_path"] = original["job_text_path"]
+        rows[idx_to_update] = rec_dict
+    else:
+        rows.append(rec_dict)
+
+    fieldnames = [
+        "timestamp",
+        "company",
+        "role",
+        "lang",
+        "job_text_path",
+        "job_url",
+        "output_dir",
+        "files_generated",
+        "must_keywords",
+        "nice_keywords",
+        "resp_keywords",
+        "status",
+        "notes",
+    ]
+
+    with INDEX_CSV_PATH.open("w", newline="", encoding="utf-8") as f:
+        writer = csv.DictWriter(f, fieldnames=fieldnames)
+        writer.writeheader()
+        writer.writerows(rows)
 
 
 @app.post("/jobs")
@@ -61,9 +124,9 @@ async def upload_job_text(
 
     if not content:
         raise HTTPException(status_code=400, detail="Job description text is empty")
-
-    safe_company = company.replace(" ", "_")
-    safe_role = role.replace(" ", "_")
+    
+    safe_company = _slugify(company)
+    safe_role = _slugify(role)
     job_txt_name = f"{safe_company}_{safe_role}.txt"
     job_txt_path = CV_READER_DIR / job_txt_name
     job_txt_path.write_text(content, encoding="utf-8")
@@ -96,8 +159,7 @@ async def upload_job_text(
         notes=notes or "",
     )
 
-    append_to_index_csv(INDEX_CSV_PATH, rec)
-    append_to_index_jsonl(OUTPUT_DIR / "index.jsonl", rec)
+    _update_or_append_index(rec)
 
     return {
         "message": "Application generated with AI" if ai else "Application generated without AI",
