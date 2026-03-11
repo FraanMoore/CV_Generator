@@ -4,13 +4,15 @@ import { fetchApplications, updateApplication, uploadJobText, type Application }
 import LoadingIndicator from "../utils/LoadingIndicator";
 import Navbar from "./Navbar";
 import type { NewEntryData } from "./NewEntryDialog";
-import TablePaginationDemo from "./Pagination";
+import Pagination from "./Pagination";
 import PostulationCard from "./PostulationCard";
 
 const Home = () => {
     const [applications, setApplications] = useState<Application[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const [page, setPage] = useState(0);
+    const [rowsPerPage, setRowsPerPage] = useState(12);
 
     const handleUpdateApplication = async (
         id: number,
@@ -48,6 +50,13 @@ const Home = () => {
         fetchApplications().then(setApplications).catch(() => setError("Error refreshing applications after deletion"));
     }
 
+    const rows = applications;
+
+    const paginatedRows = rows.slice(
+        page * rowsPerPage,
+        page * rowsPerPage + rowsPerPage
+    );
+
     useEffect(() => {
         const load = async () => {
             try {
@@ -84,7 +93,7 @@ const Home = () => {
         <>
             <Navbar onCreateEntry={handleCreateEntry} />
             <CardWrapper>
-                {applications.map((app) => (
+                {paginatedRows.map((app) => (
                     <PostulationCard
                         key={app.id}
                         application={app}
@@ -93,7 +102,13 @@ const Home = () => {
                     />
                 ))}
             </CardWrapper>
-            <TablePaginationDemo />
+            <Pagination
+                count={rows.length}
+                page={page}
+                rowsPerPage={rowsPerPage}
+                onPageChange={(_, newPage) => setPage(newPage)}
+                onRowsPerPageChange={(e) => setRowsPerPage(parseInt(e.target.value, 12))}
+            />
         </>
     );
 };
