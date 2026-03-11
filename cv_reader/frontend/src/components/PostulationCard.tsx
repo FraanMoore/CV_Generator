@@ -1,3 +1,4 @@
+import DownloadIcon from '@mui/icons-material/Download';
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
@@ -10,6 +11,7 @@ import styled from 'styled-components';
 import { fetchApplication, fetchApplicationDescription, type Application } from '../utils/api';
 import BaseTypography from '../utils/BaseTypography';
 import LoadingIndicator from '../utils/LoadingIndicator';
+import DownloadDialog from './DownloadDialog';
 import EditDialog, { type NewSavedData } from './EditDialog';
 import MoreDetailsDialog from './MoreDetailsDialog';
 import StatusButton, { type status } from './StatusButton';
@@ -34,6 +36,7 @@ const PostulationCard = ({
     const [mustKeyWords, setMustKeyWords] = useState<string>('');
     const [niceKeyWords, setNiceKeyWords] = useState<string>('');
     const [loading, setLoading] = useState(false);
+    const [openDownload, setOpenDownload] = useState(false);
     const { id, company, role, job_url, status, notes } = application;
 
     const handleMoreDetails = async () => {
@@ -64,6 +67,12 @@ const PostulationCard = ({
 
     const handleCloseEdit = () => {
         setOpenEdit(false);
+    };
+    const handleOpenDownload = () => {
+        setOpenDownload(true);
+    }
+    const handleCloseDownload = () => {
+        setOpenDownload(false);
     };
 
     const handleEditSave = async (data: NewSavedData) => {
@@ -111,6 +120,7 @@ const PostulationCard = ({
             <CardActions>
                 <StyledButton size="small" onClick={handleMoreDetails}>More details</StyledButton>
                 <StyledButton size="small" onClick={handleEdit}>Edit</StyledButton>
+                <Button onClick={handleOpenDownload} startIcon={<DownloadIcon />}></Button>
             </CardActions>
         </React.Fragment>
     );
@@ -134,6 +144,7 @@ const PostulationCard = ({
                 onEdit={handleEditSave}
                 onDelete={handleDeleted}
             />
+            <DownloadDialog id={id} open={openDownload} onClose={handleCloseDownload} />
         </Container>
     );
 
