@@ -68,29 +68,17 @@ async def upload_job_text(
     job_txt_path = CV_READER_DIR / job_txt_name
     job_txt_path.write_text(content, encoding="utf-8")
 
-    if ai:
-        result = generate_application(
-            job_text=str(job_txt_path),
-            job_url=job_url,
-            company=company,
-            role=role,
-            cv_master_path=str(CV_MASTER_PATH),
-            lang=lang,
-            out_dir=str(OUTPUT_DIR),
-            ai=ai,
-            ai_model=ai_model,
-        )
-        return {
-            "message": "Application generated with AI",
-            "output_dir": result["output_dir"],
-            "files_generated": result["files_generated"],
-        }
-
-    timestamp_folder = datetime.now().strftime("%Y-%m-%d_%H%M")
-    out_path = OUTPUT_DIR / f"{timestamp_folder}_{safe_company}_{safe_role}"
-    out_path.mkdir(parents=True, exist_ok=True)
-
-    generated_files: list[str] = []
+    result = generate_application(
+        job_text=str(job_txt_path),
+        job_url=job_url,
+        company=company,
+        role=role,
+        cv_master_path=str(CV_MASTER_PATH),
+        lang=lang,
+        out_dir=str(OUTPUT_DIR),
+        ai=ai,
+        ai_model=ai_model,
+    )
 
     rec = ApplicationRecord(
         timestamp=datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
@@ -99,11 +87,11 @@ async def upload_job_text(
         lang=lang,
         job_text_path=str(job_txt_path.resolve()),
         job_url=job_url,
-        output_dir=str(out_path.resolve()),
-        files_generated=generated_files,
-        must_keywords=[],
-        nice_keywords=[],
-        resp_keywords=[],
+        output_dir=result["output_dir"],
+        files_generated=list(result.get("files_generated", [])),
+        must_keywords=list(result.get("must_keywords", [])),
+        nice_keywords=list(result.get("nice_keywords", [])),
+        resp_keywords=list(result.get("resp_keywords", [])),
         status=status or "draft",
         notes=notes or "",
     )
@@ -112,9 +100,9 @@ async def upload_job_text(
     append_to_index_jsonl(OUTPUT_DIR / "index.jsonl", rec)
 
     return {
-        "message": "Application registered without AI",
-        "output_dir": str(out_path.resolve()),
-        "files_generated": generated_files,
+        "message": "Application generated with AI" if ai else "Application generated without AI",
+        "output_dir": result["output_dir"],
+        "files_generated": result["files_generated"],
     }
 
 
