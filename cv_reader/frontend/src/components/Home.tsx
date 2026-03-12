@@ -2,10 +2,14 @@ import { useEffect, useState } from "react";
 import styled from "styled-components";
 import { fetchApplications, updateApplication, uploadJobText, type Application } from "../utils/api";
 import LoadingIndicator from "../utils/LoadingIndicator";
+import Pagination from "../utils/Pagination";
+
 import Navbar from "./Navbar";
 import type { NewEntryData } from "./NewEntryDialog";
-import Pagination from "./Pagination";
 import PostulationCard from "./PostulationCard";
+
+import CustomizedHook, { type CardStatusOptionType } from "../utils/Filter";
+import FreeSolo from "../utils/Search";
 
 const Home = () => {
     const [applications, setApplications] = useState<Application[]>([]);
@@ -13,6 +17,8 @@ const Home = () => {
     const [error, setError] = useState<string | null>(null);
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(12);
+    const [statusFilter, setStatusFilter] = useState<CardStatusOptionType[]>([]);
+    const [searchTerm, setSearchTerm] = useState("");
 
     const handleUpdateApplication = async (
         id: number,
@@ -48,11 +54,25 @@ const Home = () => {
 
     const handleCardDeleted = () => {
         fetchApplications().then(setApplications).catch(() => setError("Error refreshing applications after deletion"));
-    }
+    };
 
-    const rows = applications;
+    const filteredRows = applications.filter(app => {
+        const matchesStatus =
+            statusFilter.length === 0
+                ? true
+                : statusFilter.some(s => s.value === app.status);
 
-    const paginatedRows = rows.slice(
+        const term = searchTerm.trim().toLowerCase();
+        if (!term) return matchesStatus;
+
+        const matchesSearch =
+            app.company.toLowerCase().includes(term) ||
+            app.role.toLowerCase().includes(term);
+
+        return matchesStatus && matchesSearch;
+    });
+
+    const paginatedRows = filteredRows.slice(
         page * rowsPerPage,
         page * rowsPerPage + rowsPerPage
     );
@@ -92,6 +112,10 @@ const Home = () => {
     return (
         <>
             <Navbar onCreateEntry={handleCreateEntry} />
+            <FiltersContainer>
+                <CustomizedHook onChangeValues={setStatusFilter} />
+                <FreeSolo roles={applications.map(app => app.role)} companies={applications.map(app => app.company)} value={searchTerm} onChange={setSearchTerm} />
+            </FiltersContainer>
             <CardWrapper>
                 {paginatedRows.map((app) => (
                     <PostulationCard
@@ -103,7 +127,7 @@ const Home = () => {
                 ))}
             </CardWrapper>
             <Pagination
-                count={rows.length}
+                count={filteredRows.length}
                 page={page}
                 rowsPerPage={rowsPerPage}
                 onPageChange={(_, newPage) => setPage(newPage)}
@@ -121,4 +145,12 @@ const CardWrapper = styled.div`
   align-items: flex-start;
   gap: 24px;
   padding: 24px;
+`;
+const FiltersContainer = styled.div`
+    display: flex;
+    justify-content: center;
+    padding: 12px;
+    flex-direction: column-reverse;
+    flex-wrap: nowrap;
+    align-items: center;
 `;

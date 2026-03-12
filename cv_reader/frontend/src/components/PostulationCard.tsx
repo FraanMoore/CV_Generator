@@ -120,7 +120,7 @@ const PostulationCard = ({
             <CardActions>
                 <StyledButton size="small" onClick={handleMoreDetails}>More details</StyledButton>
                 <StyledButton size="small" onClick={handleEdit}>Edit</StyledButton>
-                <Button onClick={handleOpenDownload} startIcon={<DownloadIcon />}></Button>
+                <Button onClick={handleOpenDownload} startIcon={<DownloadIcon color='secondary' />}></Button>
             </CardActions>
         </React.Fragment>
     );
