@@ -1,5 +1,5 @@
 import MenuIcon from '@mui/icons-material/Menu';
-import { styled } from '@mui/material';
+import { Button, styled } from '@mui/material';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -13,7 +13,7 @@ import Toolbar from '@mui/material/Toolbar';
 import { useState } from 'react';
 import { useLayout } from '../hooks/useLayout';
 import BaseTypography from '../utils/BaseTypography';
-import NewEntryDialog, { NewEntryButton, type NewEntryData } from './NewEntryDialog';
+import NewEntryDialog, { type NewEntryData } from './NewEntryDialog';
 
 interface Props {
     /**
@@ -86,9 +86,9 @@ const Navbar = (props: Props) => {
                     </Title>
                     <ButtonBox $isMobile={isMobile}>
                         {navItems.map((item) => (
-                            <NewEntryButton key={item} onClick={handleOpenNewEntry}>
+                            <Button key={item} onClick={handleOpenNewEntry}>
                                 {item}
-                            </NewEntryButton>
+                            </Button>
                         ))}
                     </ButtonBox>
                 </Toolbar>

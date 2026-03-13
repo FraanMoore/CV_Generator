@@ -1,3 +1,4 @@
+import CloseIcon from '@mui/icons-material/Close';
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 import Button from '@mui/material/Button';
 import Chip from '@mui/material/Chip';
@@ -70,9 +71,16 @@ const EditDialog = ({ open, onClose, application, onEdit, onDelete }: EditDialog
         <React.Fragment>
             <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
                 <DialogContent>
-                    <DialogContentText>
+                    <StyledDialogContentText>
                         Edit postulation
-                    </DialogContentText>
+                        <div>
+                            <Chip
+                                onClick={onClose}
+                                onDelete={onClose}
+                                deleteIcon={<CloseIcon />}
+                            />
+                        </div>
+                    </StyledDialogContentText>
                     <form onSubmit={handleSubmit} id="edit-entry-form">
                         <StatusButton jobStatus={status} onChangeStatus={setStatus} />
                         <TextField
@@ -84,7 +92,6 @@ const EditDialog = ({ open, onClose, application, onEdit, onDelete }: EditDialog
                             label="Role"
                             type="text"
                             fullWidth
-                            variant="standard"
                             defaultValue={application.role}
                         />
                         <TextField
@@ -95,7 +102,6 @@ const EditDialog = ({ open, onClose, application, onEdit, onDelete }: EditDialog
                             label="Company Name"
                             type="text"
                             fullWidth
-                            variant="standard"
                             defaultValue={application.company}
                         />
                         <TextField
@@ -105,7 +111,6 @@ const EditDialog = ({ open, onClose, application, onEdit, onDelete }: EditDialog
                             label="Job URL"
                             type="url"
                             fullWidth
-                            variant="standard"
                             defaultValue={application.job_url}
                         />
                         <TextField
@@ -115,27 +120,26 @@ const EditDialog = ({ open, onClose, application, onEdit, onDelete }: EditDialog
                             label="Notes"
                             type="text"
                             fullWidth
-                            variant="standard"
                             multiline
-                            minRows={2}
-                            defaultValue={application.notes || ''}
+                            minRows={1}
+                            defaultValue={application.notes}
                         />
                     </form>
                 </DialogContent>
-                <DialogActions>
+                <StyledDialogActions>
                     <Chip
                         label="Delete"
                         onClick={handleDelete}
                         onDelete={handleDelete}
                         deleteIcon={<DeleteOutlinedIcon />}
-                        variant="outlined"
-                        color='error'
                     />
-                    <Button onClick={onClose}>Cancel</Button>
-                    <Button type="submit" form="edit-entry-form" loadingIndicator>
-                        Save
-                    </Button>
-                </DialogActions>
+                    <div>
+                        <Button onClick={onClose}>Cancel</Button>
+                        <Button type="submit" form="edit-entry-form" loadingIndicator>
+                            Save
+                        </Button>
+                    </div>
+                </StyledDialogActions>
             </Dialog>
         </React.Fragment>
     );
@@ -143,9 +147,20 @@ const EditDialog = ({ open, onClose, application, onEdit, onDelete }: EditDialog
 
 export default EditDialog;
 
-export const NewEntryButton = styled(Button)`
-    color: var(--color-font-primary);
-    &:hover {
-       none;
+const StyledDialogContentText = styled(DialogContentText)`
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+`;
+const StyledDialogActions = styled(DialogActions)`
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    .MuiChip-root{
+        background-color: transparent;
+        padding: 8px;
+        .MuiChip-label {
+            padding-right: 8px;
+        }
     }
 `;

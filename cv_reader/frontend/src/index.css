@@ -1,17 +1,73 @@
 /* Color Primary */
 :root {
-    --color-primary: #673ab7;
-    --color-primary-light: #9575cd;
-    --color-primary-dark: #512da8;
-    --color-background: #f5f5f5b3;
-    --color-secondary: #9c27b0;
+    --text: #15080c;
+    --background: #fbf4f6;
+    --primary: #bb446f;
+    --secondary: #d8a793;
+    --accent: #cc9871;
+
 }
-/* Color Font */
+/* Shades */
 :root {
-    --color-font: #0e0e0e;
-    --color-font-primary: #f5f5f5;
-    --color-font-light: #fafafa;
-    --color-font-dark: #7c7c7cbf;;
+    --text-50: #f8edf0;
+    --text-100: #f1dae1;
+    --text-200: #e3b5c3;
+    --text-300: #d590a5;
+    --text-400: #c76b87;
+    --text-500: #b94669;
+    --text-600: #943854;
+    --text-700: #6f2a3f;
+    --text-800: #4a1c2a;
+    --text-900: #250e15;
+    --text-950: #12070a;
+
+    --background-50: #f8ecf0;
+    --background-100: #f1dae0;
+    --background-200: #e4b4c2;
+    --background-300: #d68fa3;
+    --background-400: #c96984;
+    --background-500: #bb4466;
+    --background-600: #963651;
+    --background-700: #70293d;
+    --background-800: #4b1b29;
+    --background-900: #250e14;
+    --background-950: #13070a;
+
+    --primary-50: #f8ecf1;
+    --primary-100: #f1dae2;
+    --primary-200: #e4b4c6;
+    --primary-300: #d68fa9;
+    --primary-400: #c9698c;
+    --primary-500: #bb4470;
+    --primary-600: #963659;
+    --primary-700: #702943;
+    --primary-800: #4b1b2d;
+    --primary-900: #250e16;
+    --primary-950: #13070b;
+
+    --secondary-50: #f8f0ec;
+    --secondary-100: #f1e0da;
+    --secondary-200: #e4c2b4;
+    --secondary-300: #d6a38f;
+    --secondary-400: #c98469;
+    --secondary-500: #bb6644;
+    --secondary-600: #965136;
+    --secondary-700: #703d29;
+    --secondary-800: #4b291b;
+    --secondary-900: #25140e;
+    --secondary-950: #130a07;
+
+    --accent-50: #f8f1ec;
+    --accent-100: #f1e4da;
+    --accent-200: #e4c9b4;
+    --accent-300: #d6ae8f;
+    --accent-400: #c99369;
+    --accent-500: #bb7844;
+    --accent-600: #966036;
+    --accent-700: #704829;
+    --accent-800: #4b301b;
+    --accent-900: #25180e;
+    --accent-950: #130c07;
 }
 
 /* Font-size */
@@ -24,7 +80,7 @@
     --font-size-h6: 1rem;
 }
  body{
-    background: var(--color-background);
+    background: var(--background);
  }
  p{
     font-weight: bold;
@@ -33,10 +89,10 @@
  /* color status */
  :root {
     --color-draft: #94a3b8;
-    --color-applied: #3b82f6;
-    --color-interviewing: #8b5cf6;
-    --color-offer: #10b981;
-    --color-rejected: #ef4444;
+    --color-applied: var(--accent-700);
+    --color-interviewing: var(--primary-400);
+    --color-offer: var(--primary-600);
+    --color-rejected: var(--primary-950);
 
     /* color background status */
     --bg-draft: #f1f5f9;
@@ -44,4 +100,53 @@
     --bg-interviewing: #f5f3ff;
     --bg-offer: #ecfdf5;
     --bg-rejected: #fef2f2;
+}
+
+/* generic */
+:root{
+    .MuiCard-root {
+        background-color: var(--primary-50);
+        border-radius: 15px;
+    }
+    .MuiDialog-paper{
+        background-color: var(--background);
+    }
+    .MuiButtonBase-root{
+        color: var(--primary-600);
+        border-radius: 8px;
+        padding: 8px 16px;
+        text-transform: none;
+
+        justify-content: center;
+        &:hover{
+         background-color: var(--primary-100);
+        }
+    }
+    .MuiChip-root{
+        background-color: transparent;
+        padding: 0px;
+        .MuiChip-label {
+            padding-right: 0px;
+        }
+    }
+    .MuiFormControlLabel-root{
+        color: var(--primary-600);
+    }
+}
+/* FieldSet TextField */
+:root {
+
+    .MuiInputLabel-root {
+     color: var(--accent-600);
+    }
+    .MuiOutlinedInput-root:hover fieldset {
+        border: 1px solid var(--accent-600);
+    }
+
+    .MuiOutlinedInput-root{
+        &.Mui-focused fieldset{
+             border: 1px solid var(--accent-600);
+        }
+    }
+
 }

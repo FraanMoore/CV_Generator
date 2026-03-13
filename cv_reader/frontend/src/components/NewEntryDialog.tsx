@@ -1,4 +1,6 @@
+import CloseIcon from '@mui/icons-material/Close';
 import Button from '@mui/material/Button';
+import Chip from '@mui/material/Chip';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
@@ -44,7 +46,7 @@ const NewEntryDialog = ({ open, onClose, onCreate }: NewEntryDialogProps) => {
             setRole('');
             setCompany('');
             setJobURL('');
-            setNotes('No notes');
+            setNotes('');
             setJobDescription('');
             setUseAI(true);
         }
@@ -70,7 +72,15 @@ const NewEntryDialog = ({ open, onClose, onCreate }: NewEntryDialogProps) => {
     return (
         <React.Fragment>
             <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
-                <DialogTitle>New Entry</DialogTitle>
+                <StyledDialogTitle>New Entry
+                    <div>
+                        <Chip
+                            onClick={onClose}
+                            onDelete={onClose}
+                            deleteIcon={<CloseIcon />}
+                        />
+                    </div>
+                </StyledDialogTitle>
                 <DialogContent>
                     <DialogContentText>
                         Create a new postulation
@@ -86,7 +96,6 @@ const NewEntryDialog = ({ open, onClose, onCreate }: NewEntryDialogProps) => {
                             label="Role"
                             type="text"
                             fullWidth
-                            variant="standard"
                             value={role}
                             onChange={(e) => setRole(e.target.value)}
                         />
@@ -98,7 +107,6 @@ const NewEntryDialog = ({ open, onClose, onCreate }: NewEntryDialogProps) => {
                             label="Company Name"
                             type="text"
                             fullWidth
-                            variant="standard"
                             value={company}
                             onChange={(e) => setCompany(e.target.value)}
                         />
@@ -110,7 +118,6 @@ const NewEntryDialog = ({ open, onClose, onCreate }: NewEntryDialogProps) => {
                             label="Job URL"
                             type="url"
                             fullWidth
-                            variant="standard"
                             value={jobURL}
                             onChange={(e) => setJobURL(e.target.value)}
                         />
@@ -121,9 +128,8 @@ const NewEntryDialog = ({ open, onClose, onCreate }: NewEntryDialogProps) => {
                             label="Notes"
                             type="text"
                             fullWidth
-                            variant="standard"
                             multiline
-                            minRows={2}
+                            minRows={1}
                             value={notes}
                             onChange={(e) => setNotes(e.target.value)}
                         />
@@ -135,9 +141,8 @@ const NewEntryDialog = ({ open, onClose, onCreate }: NewEntryDialogProps) => {
                             label="Job Description"
                             type="text"
                             fullWidth
-                            variant="standard"
                             multiline
-                            minRows={4}
+                            minRows={1}
                             value={jobDescription}
                             onChange={(e) => setJobDescription(e.target.value)}
                         />
@@ -146,17 +151,15 @@ const NewEntryDialog = ({ open, onClose, onCreate }: NewEntryDialogProps) => {
                 <DialogActions>
                     <FormControlLabel
                         control={
-
-                            <Switch
+                            <StyledSwitch
                                 checked={useAI}
                                 onChange={(e) => setUseAI(e.target.checked)}
-                                color="secondary"
                             />
                         }
                         label={useAI ? "IA Enabled" : "IA Disabled"}
                     />
-                    <Button onClick={onClose} color='secondary'>Cancel</Button>
-                    <Button type="submit" form="new-entry-form" color='secondary'>
+                    <Button onClick={onClose}>Cancel</Button>
+                    <Button type="submit" form="new-entry-form">
                         Create
                     </Button>
                 </DialogActions>
@@ -167,9 +170,31 @@ const NewEntryDialog = ({ open, onClose, onCreate }: NewEntryDialogProps) => {
 
 export default NewEntryDialog;
 
-export const NewEntryButton = styled(Button)`
-    color: var(--color-font-primary);
+const StyledDialogTitle = styled(DialogTitle)`
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    `;
+
+const StyledSwitch = styled(Switch)`
+   .MuiSwitch-thumb {
+   color: var(--primary);
+   }
+
+& .MuiSwitch-switchBase {
     &:hover {
-       none;
-    }
+      background-color: transparent;
+    },
+
+    &.Mui-checked {
+      color: var(--primary);
+      & + .MuiSwitch-track{
+        background-color: var(--primary-500);
+      },
+    },
+  },
+
+  & .MuiSwitch-track {
+    background-color: var(--background-300);
+  },
 `;

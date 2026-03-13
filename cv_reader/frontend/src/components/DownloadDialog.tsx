@@ -90,7 +90,7 @@ const DownloadDialog = ({ id, open, onClose }: DownloadDialogProps) => {
                         ))}
                         {files.length === 0 && (
                             <ListItem>
-                                <ListItemText primary="No hay archivos disponibles para descargar" />
+                                <ListItemText primary="No available file for download." />
                             </ListItem>
                         )}
                     </List>

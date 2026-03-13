@@ -99,7 +99,7 @@ const PostulationCard = ({
 
     const card = (
         <React.Fragment>
-            <CardContent>
+            <CardContent className="postulation-card">
                 <RoleTypography gutterBottom>
                     {role}
                 </RoleTypography>
@@ -118,9 +118,9 @@ const PostulationCard = ({
                 </URLNotesTypography>
             </CardContent>
             <CardActions>
-                <StyledButton size="small" onClick={handleMoreDetails}>More details</StyledButton>
-                <StyledButton size="small" onClick={handleEdit}>Edit</StyledButton>
-                <Button onClick={handleOpenDownload} startIcon={<DownloadIcon color='secondary' />}></Button>
+                <StyledButton onClick={handleMoreDetails}>More details</StyledButton>
+                <StyledButton onClick={handleEdit}>Edit</StyledButton>
+                <StyledButton onClick={handleOpenDownload} startIcon={<DownloadIcon />} />
             </CardActions>
         </React.Fragment>
     );
@@ -170,24 +170,23 @@ const StyledCard = styled(Card)`
 
 const RoleTypography = styled(BaseTypography)`
     font-size: var(--font-size-h6);
-    color: var(--color-primary);
 `;
 const CompanyTypography = styled(BaseTypography)`
     font-size: var(--font-size-h5);
-    color: var(--color-primary-dark);
 `;
 const URLNotesTypography = styled(BaseTypography)`
     font-size: var(--font-size-h6);
-    color: var(--color-primary-light);
     margin-top: 18px;
     a{
-        color: var(--color-primary-light);
+        color: var(--text-950);
         font-size: var(--font-size-h6);
         text-decoration: none;
     }
 `;
 const StyledButton = styled(Button)`
-    color: var(--color-font-dark);
     font-size: var(--font-size-h6);
     text-transform: none;
+    .MuiButton-startIcon {
+        margin-right: 0px;
+    }
 `;
