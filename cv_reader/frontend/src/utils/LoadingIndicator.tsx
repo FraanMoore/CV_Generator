@@ -18,7 +18,7 @@ type loadingIndicatorProps = {
 };
 
 const LoadingIndicator = (props: loadingIndicatorProps) => {
-    const { className, size = 64, color = 'secondary' } = props;
+    const { className, size = 64, color = 'var(--primary-600)' } = props;
 
     return (
         <Loading

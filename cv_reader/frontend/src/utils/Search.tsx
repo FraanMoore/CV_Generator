@@ -1,4 +1,3 @@
-import SearchIcon from '@mui/icons-material/Search';
 import Autocomplete from '@mui/material/Autocomplete';
 import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
@@ -28,7 +27,6 @@ export default function Search({
         <Stack spacing={2} sx={{ width }}>
             <Autocomplete
                 freeSolo
-                disableClearable
                 options={options}
                 value={value}
                 onInputChange={(_, newInputValue) => onChange(newInputValue)}
@@ -37,15 +35,6 @@ export default function Search({
                     <TextField
                         {...params}
                         label="Search by role or company"
-                        color='secondary'
-                        slotProps={{
-                            input: {
-                                ...params.InputProps,
-                                type: 'search',
-                                color: 'secondary',
-                                endAdornment: (<SearchIcon color='secondary' />)
-                            },
-                        }}
                     />
                 )}
             />
