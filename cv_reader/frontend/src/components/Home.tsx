@@ -8,7 +8,8 @@ import Navbar from "./Navbar";
 import type { NewEntryData } from "./NewEntryDialog";
 import PostulationCard from "./PostulationCard";
 
-import CustomizedHook, { type CardStatusOptionType } from "../utils/Filter";
+import { cardStatusOptions } from "../utils/cardStatusOptions";
+import Filter, { type CardStatusOptionType } from "../utils/Filter";
 import FreeSolo from "../utils/Search";
 
 const Home = () => {
@@ -16,9 +17,25 @@ const Home = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [page, setPage] = useState(0);
-    const [rowsPerPage, setRowsPerPage] = useState(12);
-    const [statusFilter, setStatusFilter] = useState<CardStatusOptionType[]>([]);
+    const [rowsPerPage, setRowsPerPage] = useState(10);
+    const [statusFilter, setStatusFilter] = useState<CardStatusOptionType[]>(() => {
+        const raw = localStorage.getItem("statusFilter");
+        if (!raw) {
+            return [cardStatusOptions[0]];
+        }
+        try {
+            const parsed = JSON.parse(raw) as CardStatusOptionType['value'][];
+            return cardStatusOptions.filter(option => parsed.includes(option.value));
+        } catch {
+            return [cardStatusOptions[0]];
+        }
+    });
     const [searchTerm, setSearchTerm] = useState("");
+
+    const handleChangeFilterValue = (value: CardStatusOptionType[]) => {
+        setStatusFilter(value);
+        localStorage.setItem("statusFilter", JSON.stringify(value.map(s => s.value)));
+    }
 
     const handleUpdateApplication = async (
         id: number,
@@ -91,6 +108,10 @@ const Home = () => {
         load();
     }, []);
 
+    useEffect(() => {
+        localStorage.setItem("statusFilter", JSON.stringify(statusFilter.map(s => s.value)));
+    }, [statusFilter]);
+
     if (loading) {
         return (
             <>
@@ -113,7 +134,7 @@ const Home = () => {
         <>
             <Navbar onCreateEntry={handleCreateEntry} />
             <FiltersContainer>
-                <CustomizedHook onChangeValues={setStatusFilter} />
+                <Filter value={statusFilter} onChangeValues={handleChangeFilterValue} />
                 <FreeSolo roles={applications.map(app => app.role)} companies={applications.map(app => app.company)} value={searchTerm} onChange={setSearchTerm} />
             </FiltersContainer>
             <CardWrapper>
@@ -131,7 +152,7 @@ const Home = () => {
                 page={page}
                 rowsPerPage={rowsPerPage}
                 onPageChange={(_, newPage) => setPage(newPage)}
-                onRowsPerPageChange={(e) => setRowsPerPage(parseInt(e.target.value, 12))}
+                onRowsPerPageChange={(e) => setRowsPerPage(parseInt(e.target.value, 10))}
             />
         </>
     );

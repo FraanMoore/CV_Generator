@@ -6,6 +6,7 @@ import useAutocomplete, {
     type AutocompleteGetItemProps,
     type UseAutocompleteProps,
 } from '@mui/material/useAutocomplete';
+import { cardStatusOptions } from './cardStatusOptions';
 
 const Root = styled('div')(({ theme }) => ({
     color: 'rgba(0,0,0,0.85)',
@@ -227,21 +228,14 @@ export interface CardStatusOptionType {
     value: 'applied' | 'interviewing' | 'offer' | 'rejected' | 'draft';
 }
 
-const cardStatusOptions: CardStatusOptionType[] = [
-    { label: 'Applied', value: 'applied' },
-    { label: 'Interviewing', value: 'interviewing' },
-    { label: 'Offer', value: 'offer' },
-    { label: 'Rejected', value: 'rejected' },
-    { label: 'Draft', value: 'draft' },
-];
-
-export default function CustomizedHook(props: {
+export default function Filter(props: {
+    value?: CardStatusOptionType[];
     onChangeValues?: (values: CardStatusOptionType[]) => void;
 }) {
     return (
         <CustomAutocomplete<CardStatusOptionType>
             id="card-status-filter"
-            defaultValue={[cardStatusOptions[0]]}
+            value={props.value}
             options={cardStatusOptions}
             getOptionLabel={(option) => option.label}
             onChangeValues={props.onChangeValues}
