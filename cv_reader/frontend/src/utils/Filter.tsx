@@ -25,7 +25,7 @@ const Label = styled('label')`
 export const InputWrapper = styled('div')(({ theme }) => ({
     width: '300px',
     border: '1px solid #d9d9d9',
-    backgroundColor: '#fff',
+    backgroundColor: 'rgba(129, 129, 129, 0.05)',
     borderRadius: '4px',
     padding: '1px',
     display: 'flex',
@@ -35,20 +35,13 @@ export const InputWrapper = styled('div')(({ theme }) => ({
         backgroundColor: '#141414',
     }),
     '&:hover': {
-        borderColor: '#9c27b0',
+        borderColor: 'var(--accent-600)',
         ...theme.applyStyles('dark', {
-            borderColor: '#9c27b0',
-        }),
-    },
-    '&.focused': {
-        borderColor: '#9c27b0',
-        boxShadow: '0 0 0 1px #9c27b0',
-        ...theme.applyStyles('dark', {
-            borderColor: '#9c27b0',
+            borderColor: 'var(--accent-600)',
         }),
     },
     '& input': {
-        backgroundColor: '#fff',
+        backgroundColor: 'rgba(129, 129, 129, 0.05)',
         color: 'rgba(0,0,0,.85)',
         height: '30px',
         boxSizing: 'border-box',
@@ -149,11 +142,11 @@ const Listbox = styled('ul')(({ theme }) => ({
             backgroundColor: '#2b2b2b',
         }),
         '& svg': {
-            color: '#9c27b0',
+            color: 'var(--accent-600)',
         },
     },
     [`& li.${autocompleteClasses.focused}`]: {
-        backgroundColor: '#e6f7ff',
+        backgroundColor: 'var(--background-50)',
         cursor: 'pointer',
         ...theme.applyStyles('dark', {
             backgroundColor: '#003b57',
@@ -191,7 +184,7 @@ function CustomAutocomplete<Value>(
     return (
         <Root>
             <div {...getRootProps()}>
-                <Label {...getInputLabelProps()} />
+                <Label {...getInputLabelProps()}></Label>
                 <InputWrapper ref={setAnchorEl} className={focused ? 'focused' : ''}>
                     {value.map((option, index) => {
                         const { key, ...itemProps } = getItemProps({ index });

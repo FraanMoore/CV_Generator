@@ -132,6 +132,10 @@
     .MuiFormControlLabel-root{
         color: var(--primary-600);
     }
+    /* the only exception for rgba*/
+    .MuiAutocomplete-root{
+        background-color:rgba(129, 129, 129, 0.05);
+    }
 }
 /* FieldSet TextField */
 :root {
