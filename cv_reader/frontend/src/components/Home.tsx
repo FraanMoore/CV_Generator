@@ -8,9 +8,10 @@ import Navbar from "./Navbar";
 import type { NewEntryData } from "./NewEntryDialog";
 import PostulationCard from "./PostulationCard";
 
+import { Box } from "@mui/material";
 import { cardStatusOptions } from "../utils/cardStatusOptions";
 import Filter, { type CardStatusOptionType } from "../utils/Filter";
-import FreeSolo from "../utils/Search";
+import Search from "../utils/Search";
 
 const Home = () => {
     const [applications, setApplications] = useState<Application[]>([]);
@@ -135,7 +136,7 @@ const Home = () => {
             <Navbar onCreateEntry={handleCreateEntry} />
             <FiltersContainer>
                 <Filter value={statusFilter} onChangeValues={handleChangeFilterValue} />
-                <FreeSolo roles={applications.map(app => app.role)} companies={applications.map(app => app.company)} value={searchTerm} onChange={setSearchTerm} />
+                <Search roles={applications.map(app => app.role)} companies={applications.map(app => app.company)} value={searchTerm} onChange={setSearchTerm} />
             </FiltersContainer>
             <CardWrapper>
                 {paginatedRows.map((app) => (
@@ -167,11 +168,15 @@ const CardWrapper = styled.div`
   gap: 24px;
   padding: 24px;
 `;
-const FiltersContainer = styled.div`
+const FiltersContainer = styled(Box)`
     display: flex;
     justify-content: center;
     padding: 12px;
-    flex-direction: column-reverse;
     flex-wrap: nowrap;
     align-items: center;
+    gap: 16px;
+    background-color: rgba(129, 129, 129, 0.05);;
+    border-radius: 10px;
+    width: fit-content;
+    margin: 0 auto;
 `;

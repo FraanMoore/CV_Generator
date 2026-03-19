@@ -126,7 +126,7 @@
         background-color: transparent;
         padding: 0px;
         .MuiChip-label {
-            padding-right: 0px;
+            padding-right: 8px;
         }
     }
     .MuiFormControlLabel-root{
@@ -151,6 +151,7 @@
         &.Mui-focused fieldset{
              border: 1px solid var(--accent-600);
         }
+        color: var(--primary-600);
     }
 
 }
