@@ -9,11 +9,13 @@ import type { NewEntryData } from "./NewEntryDialog";
 import PostulationCard from "./PostulationCard";
 
 import { Box } from "@mui/material";
+import { useLayout } from "../hooks/useLayout";
 import { cardStatusOptions } from "../utils/cardStatusOptions";
 import Filter, { type CardStatusOptionType } from "../utils/Filter";
 import Search from "../utils/Search";
 
 const Home = () => {
+    const { isDesktop } = useLayout();
     const [applications, setApplications] = useState<Application[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -134,7 +136,7 @@ const Home = () => {
     return (
         <>
             <Navbar onCreateEntry={handleCreateEntry} />
-            <FiltersContainer>
+            <FiltersContainer $isDesktop={isDesktop}>
                 <Filter value={statusFilter} onChangeValues={handleChangeFilterValue} />
                 <Search roles={applications.map(app => app.role)} companies={applications.map(app => app.company)} value={searchTerm} onChange={setSearchTerm} />
             </FiltersContainer>
@@ -168,15 +170,16 @@ const CardWrapper = styled.div`
   gap: 24px;
   padding: 24px;
 `;
-const FiltersContainer = styled(Box)`
+const FiltersContainer = styled(Box) <{ $isDesktop: boolean }>`
     display: flex;
     justify-content: center;
     padding: 12px;
     flex-wrap: nowrap;
     align-items: center;
+    flex-direction: ${props => props.$isDesktop ? 'row' : 'column-reverse'};
     gap: 16px;
     background-color: rgba(129, 129, 129, 0.05);;
     border-radius: 10px;
     width: fit-content;
-    margin: 0 auto;
+    margin: 30px auto;
 `;
