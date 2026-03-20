@@ -118,9 +118,9 @@ const PostulationCard = ({
                 </URLNotesTypography>
             </CardContent>
             <CardActions>
-                <StyledButton onClick={handleMoreDetails}>More details</StyledButton>
-                <StyledButton onClick={handleEdit}>Edit</StyledButton>
-                <StyledButton onClick={handleOpenDownload} startIcon={<DownloadIcon />} />
+                <StyledButton onClick={handleMoreDetails} aria-label='more-details'>More details</StyledButton>
+                <StyledButton onClick={handleEdit} aria-label='edit'>Edit</StyledButton>
+                <StyledButton onClick={handleOpenDownload} startIcon={<DownloadIcon />} aria-label='download' />
             </CardActions>
         </React.Fragment>
     );

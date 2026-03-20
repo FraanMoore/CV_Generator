@@ -25,8 +25,33 @@ Object.defineProperty(window, 'matchMedia', {
   })),
 });
 
-globalThis.ResizeObserver = vi.fn().mockImplementation(() => ({
-  observe: vi.fn(),
-  unobserve: vi.fn(),
-  disconnect: vi.fn(),
-}));
+globalThis.ResizeObserver = class ResizeObserver {
+  observe = vi.fn();
+  unobserve = vi.fn();
+  disconnect = vi.fn();
+};
+
+// Mock ResizeObserver globally for tests (needed by MUI TextareaAutosize)
+if (typeof window !== 'undefined' && !('ResizeObserver' in window)) {
+  // @ts-expect-error jsdom doesn't implement ResizeObserver
+  window.ResizeObserver = class ResizeObserver {
+    callback: ResizeObserverCallback;
+    constructor(callback: ResizeObserverCallback) {
+      this.callback = callback;
+    }
+    observe() {
+      // no-op
+    }
+    unobserve() {
+      // no-op
+    }
+    disconnect() {
+      // no-op
+    }
+  };
+}
+
+// In case some code imports ResizeObserver directly from global
+if (typeof globalThis !== 'undefined' && !('ResizeObserver' in globalThis)) {
+  globalThis.ResizeObserver = window.ResizeObserver;
+}

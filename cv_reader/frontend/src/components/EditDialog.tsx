@@ -21,7 +21,7 @@ export type NewSavedData = {
     notes: string;
 };
 
-type EditDialogProps = {
+export type EditDialogProps = {
     open: boolean;
     onClose: () => void;
     application: Application | null;
