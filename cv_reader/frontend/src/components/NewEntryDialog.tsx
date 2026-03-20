@@ -1,6 +1,5 @@
 import CloseIcon from '@mui/icons-material/Close';
 import Button from '@mui/material/Button';
-import Chip from '@mui/material/Chip';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
@@ -73,13 +72,10 @@ const NewEntryDialog = ({ open, onClose, onCreate }: NewEntryDialogProps) => {
         <React.Fragment>
             <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
                 <StyledDialogTitle>New Entry
-                    <div>
-                        <Chip
-                            onClick={onClose}
-                            onDelete={onClose}
-                            deleteIcon={<CloseIcon />}
-                        />
-                    </div>
+                    <Button
+                        onClick={onClose}
+                        endIcon={<CloseIcon />}
+                    />
                 </StyledDialogTitle>
                 <DialogContent>
                     <DialogContentText>
@@ -177,6 +173,10 @@ const StyledDialogTitle = styled(DialogTitle)`
     `;
 
 const StyledSwitch = styled(Switch)`
+    .MuiButtonBase-root{
+        box-shadow: none;
+        background-color: transparent;
+    }
    .MuiSwitch-thumb {
    color: var(--primary);
    }

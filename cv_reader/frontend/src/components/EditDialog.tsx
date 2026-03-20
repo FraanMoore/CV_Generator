@@ -73,13 +73,10 @@ const EditDialog = ({ open, onClose, application, onEdit, onDelete }: EditDialog
                 <DialogContent>
                     <StyledDialogContentText>
                         Edit postulation
-                        <div>
-                            <Chip
-                                onClick={onClose}
-                                onDelete={onClose}
-                                deleteIcon={<CloseIcon />}
-                            />
-                        </div>
+                        <Button
+                            onClick={onClose}
+                            endIcon={<CloseIcon />}
+                        />
                     </StyledDialogContentText>
                     <form onSubmit={handleSubmit} id="edit-entry-form">
                         <StatusButton jobStatus={status} onChangeStatus={setStatus} />
@@ -133,12 +130,12 @@ const EditDialog = ({ open, onClose, application, onEdit, onDelete }: EditDialog
                         onDelete={handleDelete}
                         deleteIcon={<DeleteOutlinedIcon />}
                     />
-                    <div>
+                    <BasicActionsContainer>
                         <Button onClick={onClose}>Cancel</Button>
                         <Button type="submit" form="edit-entry-form" loadingIndicator>
                             Save
                         </Button>
-                    </div>
+                    </BasicActionsContainer>
                 </StyledDialogActions>
             </Dialog>
         </React.Fragment>
@@ -156,11 +153,8 @@ const StyledDialogActions = styled(DialogActions)`
     display: flex;
     justify-content: space-between;
     align-items: center;
-    .MuiChip-root{
-        background-color: transparent;
-        padding: 8px;
-        .MuiChip-label {
-            padding-right: 8px;
-        }
-    }
+`;
+const BasicActionsContainer = styled.div`
+    display: flex;
+    gap: 8px;
 `;

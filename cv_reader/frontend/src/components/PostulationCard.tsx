@@ -186,6 +186,7 @@ const URLNotesTypography = styled(BaseTypography)`
 const StyledButton = styled(Button)`
     font-size: var(--font-size-h6);
     text-transform: none;
+    height: stretch;
     .MuiButton-startIcon {
         margin-right: 0px;
     }

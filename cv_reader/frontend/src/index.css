@@ -81,6 +81,7 @@
 }
  body{
     background: var(--background);
+    --height: 1;
  }
  p{
     font-weight: bold;
@@ -116,17 +117,36 @@
         border-radius: 8px;
         padding: 8px 16px;
         text-transform: none;
-
         justify-content: center;
-        &:hover{
-         background-color: var(--primary-100);
+        cursor: pointer;
+        background-color: var(--background-50);
+        box-shadow: 
+        calc(0.2rem * var(--height)) calc(0.2rem * var(--height)) 0.5rem var(--primary-200), 
+        calc(-0.2rem * var(--height)) calc(-0.2rem * var(--height)) 0.5rem var(--primary-50);
+        transition: all 0.2s ease-in-out;
+
+        &:hover {
+        box-shadow: 
+            inset calc(0.2rem * var(--height)) calc(0.2rem * var(--height)) 0.5rem var(--primary-200),
+            inset calc(-0.2rem * var(--height)) calc(-0.2rem * var(--height)) 0.5rem var(--primary-50);
+        background-color: var(--background-100); 
+        
         }
-    }
-    .MuiChip-root{
-        background-color: transparent;
-        padding: 0px;
-        .MuiChip-label {
-            padding-right: 8px;
+        .span {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        height: 100%;
+        transition: opacity 0.2s;
+        }
+
+        &:hover .span {
+        background: radial-gradient(circle at center, transparent, rgba(0,0,0,0.02));
+        }
+
+        .MuiButton-endIcon{
+        margin: 0px;
         }
     }
     .MuiFormControlLabel-root{
@@ -135,6 +155,9 @@
     /* the only exception for rgba*/
     .MuiAutocomplete-root{
         background-color:rgba(129, 129, 129, 0.05);
+    }
+    .MuiDialogActions-root{
+        padding: 26px;
     }
 }
 /* FieldSet TextField */
