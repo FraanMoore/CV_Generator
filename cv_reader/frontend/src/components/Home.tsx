@@ -76,21 +76,24 @@ const Home = () => {
         fetchApplications().then(setApplications).catch(() => setError("Error refreshing applications after deletion"));
     };
 
-    const filteredRows = applications.filter(app => {
-        const matchesStatus =
-            statusFilter.length === 0
-                ? true
-                : statusFilter.some(s => s.value === app.status);
+    const filteredRows = applications
+        .slice()
+        .sort((a, b) => b.id - a.id)
+        .filter(app => {
+            const matchesStatus =
+                statusFilter.length === 0
+                    ? true
+                    : statusFilter.some(s => s.value === app.status);
 
-        const term = searchTerm.trim().toLowerCase();
-        if (!term) return matchesStatus;
+            const term = searchTerm.trim().toLowerCase();
+            if (!term) return matchesStatus;
 
-        const matchesSearch =
-            app.company.toLowerCase().includes(term) ||
-            app.role.toLowerCase().includes(term);
+            const matchesSearch =
+                app.company.toLowerCase().includes(term) ||
+                app.role.toLowerCase().includes(term);
 
-        return matchesStatus && matchesSearch;
-    });
+            return matchesStatus && matchesSearch;
+        });
 
     const paginatedRows = filteredRows.slice(
         page * rowsPerPage,
