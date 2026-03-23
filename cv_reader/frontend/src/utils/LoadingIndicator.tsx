@@ -29,7 +29,7 @@ const LoadingIndicator = (props: loadingIndicatorProps) => {
             role="status"
             size={size}
         >
-            <CircularProgress />
+            <CircularProgress aria-label="Loading..." />
         </Loading>
     );
 };
