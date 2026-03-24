@@ -1,11 +1,9 @@
 import { useEffect, useState } from "react";
 import styled from "styled-components";
-import { fetchApplications, updateApplication, uploadJobText, type Application } from "../utils/api";
+import { fetchApplications, updateApplication, type Application } from "../utils/api";
 import LoadingIndicator from "../utils/LoadingIndicator";
 import Pagination from "../utils/Pagination";
 
-import Navbar from "./Navbar";
-import type { NewEntryData } from "./NewEntryDialog";
 import PostulationCard from "./PostulationCard";
 
 import { Box } from "@mui/material";
@@ -50,27 +48,27 @@ const Home = () => {
         );
     };
 
-    const handleCreateEntry = async (data: NewEntryData) => {
-        try {
-            await uploadJobText({
-                company: data.company,
-                role: data.role,
-                lang: 'both',
-                job_url: data.jobURL,
-                job_text: data.jobDescription,
-                ai: data.AIEnabled,
-                ai_model: 'gpt-4.1-mini',
-                status: data.status,
-                notes: data.notes,
-            });
+    // const handleCreateEntry = async (data: NewEntryData) => {
+    //     try {
+    //         await uploadJobText({
+    //             company: data.company,
+    //             role: data.role,
+    //             lang: 'both',
+    //             job_url: data.jobURL,
+    //             job_text: data.jobDescription,
+    //             ai: data.AIEnabled,
+    //             ai_model: 'gpt-4.1-mini',
+    //             status: data.status,
+    //             notes: data.notes,
+    //         });
 
-            const apps = await fetchApplications();
-            setApplications(apps);
-        } catch (e) {
-            console.error("Error creating application", e);
-            setError("Error creating job application");
-        }
-    };
+    //         const apps = await fetchApplications();
+    //         setApplications(apps);
+    //     } catch (e) {
+    //         console.error("Error creating application", e);
+    //         setError("Error creating job application");
+    //     }
+    // };
 
     const handleCardDeleted = () => {
         fetchApplications().then(setApplications).catch(() => setError("Error refreshing applications after deletion"));
@@ -121,7 +119,6 @@ const Home = () => {
     if (loading) {
         return (
             <>
-                <Navbar onCreateEntry={handleCreateEntry} />
                 <LoadingIndicator />
             </>
         );
@@ -130,7 +127,6 @@ const Home = () => {
     if (error) {
         return (
             <>
-                <Navbar onCreateEntry={handleCreateEntry} />
                 <p>{error}</p>
             </>
         );
@@ -138,7 +134,6 @@ const Home = () => {
 
     return (
         <>
-            <Navbar onCreateEntry={handleCreateEntry} />
             <FiltersContainer $isDesktop={isDesktop}>
                 <Filter value={statusFilter} onChangeValues={handleChangeFilterValue} />
                 <Search roles={applications.map(app => app.role)} companies={applications.map(app => app.company)} value={searchTerm} onChange={setSearchTerm} />

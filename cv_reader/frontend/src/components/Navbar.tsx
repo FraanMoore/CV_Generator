@@ -11,6 +11,7 @@ import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
 import Toolbar from '@mui/material/Toolbar';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useLayout } from '../hooks/useLayout';
 import BaseTypography from '../utils/BaseTypography';
 import NewEntryDialog, { type NewEntryData } from './NewEntryDialog';
@@ -25,13 +26,14 @@ interface Props {
 }
 
 const drawerWidth = '100%';
-const navItems = ['New Entry'];
+const navItems = ['New Entry', 'Edit CV'];
 
 const Navbar = (props: Props) => {
     const { window, onCreateEntry } = props;
     const [mobileOpen, setMobileOpen] = useState(false);
     const [newEntryOpen, setNewEntryOpen] = useState(false);
     const { isMobile } = useLayout();
+    const navigate = useNavigate();
 
     const handleDrawerToggle = () => {
         setMobileOpen((prevState) => !prevState);
@@ -39,6 +41,10 @@ const Navbar = (props: Props) => {
 
     const handleOpenNewEntry = () => setNewEntryOpen(true);
     const handleCloseNewEntry = () => setNewEntryOpen(false);
+
+    const handleEditCV = () => {
+        navigate('/edit-cv');
+    };
 
     const handleCreateNewEntry = (data: NewEntryData) => {
         onCreateEntry?.(data);
@@ -54,8 +60,10 @@ const Navbar = (props: Props) => {
             <List>
                 {navItems.map((item) => (
                     <ListItem key={item} disablePadding>
-                        <DrawerListItemButton>
-                            <ListItemText primary={item} onClick={handleOpenNewEntry} />
+                        <DrawerListItemButton
+                            onClick={item === 'New Entry' ? handleOpenNewEntry : handleEditCV}
+                        >
+                            <ListItemText primary={item} />
                         </DrawerListItemButton>
                     </ListItem>
                 ))}
@@ -86,7 +94,10 @@ const Navbar = (props: Props) => {
                     </Title>
                     <ButtonBox $isMobile={isMobile}>
                         {navItems.map((item) => (
-                            <Button key={item} onClick={handleOpenNewEntry}>
+                            <Button
+                                key={item}
+                                onClick={item === 'New Entry' ? handleOpenNewEntry : handleEditCV}
+                            >
                                 {item}
                             </Button>
                         ))}
