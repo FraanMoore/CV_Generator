@@ -12,6 +12,8 @@ from .index_log import ApplicationRecord, append_to_index_csv, append_to_index_j
 from datetime import datetime
 import os
 import re
+from .io_json import load_cv_master, save_cv_master
+from .models import CVMaster
 
 BASE_DIR = Path(__file__).resolve().parents[1]
 CV_READER_DIR = BASE_DIR
@@ -386,3 +388,32 @@ async def download_application_file(app_id: int, filename: str):
         raise HTTPException(status_code=404, detail="File not found")
 
     return FileResponse(path=str(file_path), filename=filename)
+
+@app.get("/cv-master")
+async def get_cv_master():
+    """Return the current cv_master.json content.
+
+    This is used by the frontend to allow editing the base CV from the UI.
+    """
+    try:
+        cv = load_cv_master(str(CV_MASTER_PATH))
+    except FileNotFoundError:
+        raise HTTPException(status_code=404, detail="cv_master.json not found")
+    # Return raw JSON structure, not pydantic instance
+    return cv.model_dump()
+
+
+@app.put("/cv-master")
+async def update_cv_master(payload: dict = Body(...)):
+    """Overwrite cv_master.json with the provided JSON payload.
+
+    The payload must conform to the CVMaster schema.
+    """
+    try:
+        cv = CVMaster.model_validate(payload)
+    except Exception as exc:
+        raise HTTPException(status_code=400, detail=f"Invalid CVMaster payload: {exc}")
+
+    from .io_json import save_cv_master  # local import to avoid cycles if any
+    save_cv_master(str(CV_MASTER_PATH), cv)
+    return {"message": "cv_master updated"}
