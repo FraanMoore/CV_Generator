@@ -1,4 +1,3 @@
-import CloseIcon from '@mui/icons-material/Close';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
@@ -11,6 +10,7 @@ import TextField from '@mui/material/TextField';
 import * as React from 'react';
 import { useState } from 'react';
 import styled from 'styled-components';
+import { useTranslation } from '../i18n';
 import StatusButton, { type status } from './StatusButton';
 
 export type NewEntryData = {
@@ -30,6 +30,7 @@ type NewEntryDialogProps = {
 };
 
 const NewEntryDialog = ({ open, onClose, onCreate }: NewEntryDialogProps) => {
+    const { t } = useTranslation();
     const [status, setStatus] = useState<NewEntryData['status']>('draft');
     const [role, setRole] = useState('');
     const [company, setCompany] = useState('');
@@ -71,15 +72,10 @@ const NewEntryDialog = ({ open, onClose, onCreate }: NewEntryDialogProps) => {
     return (
         <React.Fragment>
             <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
-                <StyledDialogTitle>New Entry
-                    <Button
-                        onClick={onClose}
-                        endIcon={<CloseIcon />}
-                    />
-                </StyledDialogTitle>
+                <StyledDialogTitle>{t('New Entry')}</StyledDialogTitle>
                 <DialogContent>
                     <DialogContentText>
-                        Create a new postulation
+                        {t('Create a new postulation')}
                     </DialogContentText>
                     <form onSubmit={handleSubmit} id="new-entry-form">
                         <StatusButton jobStatus={status} onChangeStatus={setStatus} />
@@ -89,7 +85,7 @@ const NewEntryDialog = ({ open, onClose, onCreate }: NewEntryDialogProps) => {
                             margin="dense"
                             id="role"
                             name="role"
-                            label="Role"
+                            label={t('Role')}
                             type="text"
                             fullWidth
                             value={role}
@@ -100,7 +96,7 @@ const NewEntryDialog = ({ open, onClose, onCreate }: NewEntryDialogProps) => {
                             margin="dense"
                             id="company"
                             name="company"
-                            label="Company Name"
+                            label={t('Company Name')}
                             type="text"
                             fullWidth
                             value={company}
@@ -111,7 +107,7 @@ const NewEntryDialog = ({ open, onClose, onCreate }: NewEntryDialogProps) => {
                             margin="dense"
                             id="jobURL"
                             name="jobURL"
-                            label="Job URL"
+                            label={t('Job URL')}
                             type="url"
                             fullWidth
                             value={jobURL}
@@ -121,7 +117,7 @@ const NewEntryDialog = ({ open, onClose, onCreate }: NewEntryDialogProps) => {
                             margin="dense"
                             id="notes"
                             name="notes"
-                            label="Notes"
+                            label={t('Notes')}
                             type="text"
                             fullWidth
                             multiline
@@ -134,7 +130,7 @@ const NewEntryDialog = ({ open, onClose, onCreate }: NewEntryDialogProps) => {
                             margin="dense"
                             id="jobDescription"
                             name="jobDescription"
-                            label="Job Description"
+                            label={t('Job Description')}
                             type="text"
                             fullWidth
                             multiline
@@ -152,11 +148,11 @@ const NewEntryDialog = ({ open, onClose, onCreate }: NewEntryDialogProps) => {
                                 onChange={(e) => setUseAI(e.target.checked)}
                             />
                         }
-                        label={useAI ? "IA Enabled" : "IA Disabled"}
+                        label={useAI ? t("IA Enabled") : t("IA Disabled")}
                     />
-                    <Button onClick={onClose}>Cancel</Button>
+                    <Button onClick={onClose}>{t('Cancel')}</Button>
                     <Button type="submit" form="new-entry-form">
-                        Create
+                        {t('Create')}
                     </Button>
                 </DialogActions>
             </Dialog>

@@ -1,6 +1,7 @@
 import Autocomplete from '@mui/material/Autocomplete';
 import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
+import { useTranslation } from '../i18n';
 import { cardStatusOptions } from './cardStatusOptions';
 
 export interface CardStatusOptionType {
@@ -8,10 +9,11 @@ export interface CardStatusOptionType {
     value: 'applied' | 'interviewing' | 'offer' | 'rejected' | 'draft';
 }
 
-export default function Filter(props: {
+export const Filter = (props: {
     value?: CardStatusOptionType[];
     onChangeValues?: (values: CardStatusOptionType[]) => void;
-}) {
+}) => {
+    const { t } = useTranslation();
     return (
         <Stack spacing={3} sx={{ width: 300 }}>
             <Autocomplete
@@ -25,8 +27,8 @@ export default function Filter(props: {
                 renderInput={(params) => (
                     <TextField
                         {...params}
-                        label="Status Filter"
-                        placeholder="Status"
+                        label={t("Status Filter")}
+                        placeholder={t("Status")}
                     />
                 )}
             />

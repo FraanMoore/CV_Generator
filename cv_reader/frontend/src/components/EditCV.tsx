@@ -156,16 +156,14 @@ const EditCV = ({ onCreate }: EditCVProps) => {
             try {
                 const raw = await fetchCvMaster();
                 setRawCv(raw);
-                console.log('cv_master raw', raw);
                 const mapped = mapCvMasterToEditData(raw, 'es');
-                console.log('cv_master mapped', mapped);
                 reset(mapped);
             } catch (e) {
-                console.error('Error loading cv_master', e);
+                console.error(t('Error loading cv_master'), e);
             }
         };
         load();
-    }, [reset]);
+    }, [reset, t]);
 
     useEffect(() => {
         if (!rawCv) return;
@@ -189,8 +187,7 @@ const EditCV = ({ onCreate }: EditCVProps) => {
                     </DialogContentText>
                     <Typography>{t('Choose your CV language')}</Typography>
                     <FormControlLabel
-                        label
-                        aria-label="Language"
+                        label={t('Language')}
                         control={
                             <>
                                 <Button onClick={handleSetEn}>{t('EN')}</Button>

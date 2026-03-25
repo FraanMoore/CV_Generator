@@ -5,6 +5,7 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import { useState } from 'react';
+import { useTranslation } from '../i18n';
 
 export type MoreDetailsDialogProps = {
     open: boolean;
@@ -16,6 +17,7 @@ export type MoreDetailsDialogProps = {
 };
 
 const MoreDetailsDialog = ({ open, onClose, jobDescription, must_Words, nice_Words, notes }: MoreDetailsDialogProps) => {
+    const { t } = useTranslation();
     const [scroll] = useState<DialogProps['scroll']>('paper');
 
     return (
@@ -23,10 +25,10 @@ const MoreDetailsDialog = ({ open, onClose, jobDescription, must_Words, nice_Wor
             open={open}
             onClose={onClose}
             scroll={scroll}
-            aria-labelledby="scroll-dialog-title"
-            aria-describedby="scroll-dialog-description"
+            aria-labelledby={t("scroll-dialog-title")}
+            aria-describedby={t("scroll-dialog-description")}
         >
-            <DialogTitle id="scroll-dialog-title">Job Details</DialogTitle>
+            <DialogTitle id="scroll-dialog-title">{t('Job Details')}</DialogTitle>
             <DialogContent dividers={scroll === 'paper'}>
                 <DialogContentText
                     id="scroll-dialog-description"
@@ -36,20 +38,20 @@ const MoreDetailsDialog = ({ open, onClose, jobDescription, must_Words, nice_Wor
                 >
                     {notes && (
                         <>
-                            <p>Notes:</p>
+                            <p>{t('Notes')}:</p>
                             {notes}
                         </>
                     )}
-                    <p >Job Description:</p>
+                    <p>{t('Job Description')}:</p>
                     {jobDescription}
-                    <p >"Must have" keywords:</p>
+                    <p>{t('"Must have" keywords')}:</p>
                     {must_Words}
-                    <p>"Nice to have" keywords:</p>
+                    <p>{t('"Nice to have" keywords')}:</p>
                     {nice_Words}
                 </DialogContentText>
             </DialogContent>
             <DialogActions>
-                <Button onClick={onClose}>Close</Button>
+                <Button onClick={onClose}>{t('Close')}</Button>
             </DialogActions>
         </Dialog>
     );

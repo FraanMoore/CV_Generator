@@ -4,6 +4,7 @@ import MenuItem from '@mui/material/MenuItem';
 import Select, { type SelectChangeEvent } from '@mui/material/Select';
 import * as React from 'react';
 import styled from 'styled-components';
+import { useTranslation } from '../i18n';
 
 export type status = 'applied' | 'interviewing' | 'offer' | 'rejected' | 'draft';
 
@@ -14,6 +15,7 @@ export type StatusButtonProps = {
 
 
 const StatusButton = ({ jobStatus, onChangeStatus }: StatusButtonProps) => {
+    const { t } = useTranslation();
     const [status, setStatus] = React.useState(jobStatus);
 
 
@@ -33,19 +35,19 @@ const StatusButton = ({ jobStatus, onChangeStatus }: StatusButtonProps) => {
 
     return (
         <StyledFormControl size="small" $status={status as status}>
-            <InputLabel id="demo-select-small-label">Status</InputLabel>
+            <InputLabel id="demo-select-small-label">{t('Status')}</InputLabel>
             <Select
                 labelId="demo-select-small-label"
                 id="demo-select-small"
                 value={status}
-                label="Status"
+                label={t('Status')}
                 onChange={handleChange}
             >
-                <MenuItem value="applied">applied</MenuItem>
-                <MenuItem value="interviewing">interviewing</MenuItem>
-                <MenuItem value="offer">offer</MenuItem>
-                <MenuItem value="rejected">rejected</MenuItem>
-                <MenuItem value="draft">draft</MenuItem>
+                <MenuItem value="applied">{t('applied')}</MenuItem>
+                <MenuItem value="interviewing">{t('interviewing')}</MenuItem>
+                <MenuItem value="offer">{t('offer')}</MenuItem>
+                <MenuItem value="rejected">{t('rejected')}</MenuItem>
+                <MenuItem value="draft">{t('draft')}</MenuItem>
             </Select>
         </StyledFormControl>
     );

@@ -2,6 +2,7 @@ import Autocomplete from '@mui/material/Autocomplete';
 import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
 import { useMemo } from 'react';
+import { useTranslation } from '../i18n';
 
 interface SearchProps {
     roles: string[];
@@ -11,13 +12,14 @@ interface SearchProps {
     width?: number | string;
 }
 
-export default function Search({
+export const Search = ({
     roles,
     companies,
     value,
     onChange,
     width = 300,
-}: SearchProps) {
+}: SearchProps) => {
+    const { t } = useTranslation();
     const options = useMemo(
         () => Array.from(new Set([...roles, ...companies])),
         [roles, companies],
@@ -34,7 +36,7 @@ export default function Search({
                 renderInput={(params) => (
                     <TextField
                         {...params}
-                        label="Search by role or company"
+                        label={t("Search by role or company")}
                     />
                 )}
             />

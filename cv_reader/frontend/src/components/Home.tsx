@@ -8,11 +8,14 @@ import PostulationCard from "./PostulationCard";
 
 import { Box } from "@mui/material";
 import { useLayout } from "../hooks/useLayout";
+import { useTranslation } from "../i18n";
 import { cardStatusOptions } from "../utils/cardStatusOptions";
-import Filter, { type CardStatusOptionType } from "../utils/Filter";
-import Search from "../utils/Search";
+import { Filter, type CardStatusOptionType } from "../utils/Filter";
+import { Search } from "../utils/Search";
+
 
 const Home = () => {
+    const { t } = useTranslation();
     const { isDesktop } = useLayout();
     const [applications, setApplications] = useState<Application[]>([]);
     const [loading, setLoading] = useState(true);
@@ -71,7 +74,7 @@ const Home = () => {
     // };
 
     const handleCardDeleted = () => {
-        fetchApplications().then(setApplications).catch(() => setError("Error refreshing applications after deletion"));
+        fetchApplications().then(setApplications).catch(() => setError(t("Error refreshing applications after deletion")));
     };
 
     const filteredRows = applications
@@ -104,13 +107,13 @@ const Home = () => {
                 const data = await fetchApplications();
                 setApplications(data);
             } catch {
-                setError("Error uploading job application");
+                setError(t("Error uploading job application"));
             } finally {
                 setLoading(false);
             }
         };
         load();
-    }, []);
+    }, [t]);
 
     useEffect(() => {
         localStorage.setItem("statusFilter", JSON.stringify(statusFilter.map(s => s.value)));
@@ -127,7 +130,7 @@ const Home = () => {
     if (error) {
         return (
             <>
-                <p>{error}</p>
+                <p>{t(error)}</p>
             </>
         );
     }

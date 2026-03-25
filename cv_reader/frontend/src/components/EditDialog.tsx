@@ -11,6 +11,7 @@ import * as React from 'react';
 import { useState, type FormEvent } from 'react';
 import styled from 'styled-components';
 import { deleteApplication, type Application } from '../apis/api';
+import { useTranslation } from '../i18n';
 import StatusButton, { type status } from './StatusButton';
 
 export type NewSavedData = {
@@ -30,6 +31,7 @@ export type EditDialogProps = {
 };
 
 const EditDialog = ({ open, onClose, application, onEdit, onDelete }: EditDialogProps) => {
+    const { t } = useTranslation();
     const [status, setStatus] = useState<NewSavedData['status']>(
         application?.status as NewSavedData['status'] ?? 'draft'
     );
@@ -72,7 +74,7 @@ const EditDialog = ({ open, onClose, application, onEdit, onDelete }: EditDialog
             <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
                 <DialogContent>
                     <StyledDialogContentText>
-                        Edit postulation
+                        {t('Edit postulation')}
                         <Button
                             onClick={onClose}
                             endIcon={<CloseIcon />}
@@ -86,7 +88,7 @@ const EditDialog = ({ open, onClose, application, onEdit, onDelete }: EditDialog
                             margin="dense"
                             id="role"
                             name="role"
-                            label="Role"
+                            label={t('Role')}
                             type="text"
                             fullWidth
                             defaultValue={application.role}
@@ -96,7 +98,7 @@ const EditDialog = ({ open, onClose, application, onEdit, onDelete }: EditDialog
                             margin="dense"
                             id="company"
                             name="company"
-                            label="Company Name"
+                            label={t('Company Name')}
                             type="text"
                             fullWidth
                             defaultValue={application.company}
@@ -105,7 +107,7 @@ const EditDialog = ({ open, onClose, application, onEdit, onDelete }: EditDialog
                             margin="dense"
                             id="jobURL"
                             name="jobURL"
-                            label="Job URL"
+                            label={t('Job URL')}
                             type="url"
                             fullWidth
                             defaultValue={application.job_url}
@@ -114,7 +116,7 @@ const EditDialog = ({ open, onClose, application, onEdit, onDelete }: EditDialog
                             margin="dense"
                             id="notes"
                             name="notes"
-                            label="Notes"
+                            label={t('Notes')}
                             type="text"
                             fullWidth
                             multiline
@@ -125,15 +127,15 @@ const EditDialog = ({ open, onClose, application, onEdit, onDelete }: EditDialog
                 </DialogContent>
                 <StyledDialogActions>
                     <Chip
-                        label="Delete"
+                        label={t('Delete')}
                         onClick={handleDelete}
                         onDelete={handleDelete}
                         deleteIcon={<DeleteOutlinedIcon />}
                     />
                     <BasicActionsContainer>
-                        <Button onClick={onClose}>Cancel</Button>
+                        <Button onClick={onClose}>{t('Cancel')}</Button>
                         <Button type="submit" form="edit-entry-form" loadingIndicator>
-                            Save
+                            {t('Save')}
                         </Button>
                     </BasicActionsContainer>
                 </StyledDialogActions>

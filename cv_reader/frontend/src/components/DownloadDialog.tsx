@@ -11,6 +11,7 @@ import ListItemButton from "@mui/material/ListItemButton";
 import ListItemText from "@mui/material/ListItemText";
 import { useEffect, useState } from "react";
 import { BASE_URL, fetchApplicationFiles, type ApplicationFile } from "../apis/api";
+import { useTranslation } from "../i18n";
 import LoadingIndicator from "../utils/LoadingIndicator";
 
 export type DownloadDialogProps = {
@@ -20,6 +21,7 @@ export type DownloadDialogProps = {
 };
 
 const DownloadDialog = ({ id, open, onClose }: DownloadDialogProps) => {
+    const { t } = useTranslation();
     const [scroll] = useState<DialogProps['scroll']>('paper');
     const [files, setFiles] = useState<ApplicationFile[]>([]);
     const [loading, setLoading] = useState(false);
@@ -36,7 +38,7 @@ const DownloadDialog = ({ id, open, onClose }: DownloadDialogProps) => {
                 setFiles(apiFiles);
             } catch (e) {
                 console.error(e);
-                setError('Error uploading the files to download');
+                setError(t('Error uploading the files to download'));
                 setFiles([]);
             } finally {
                 setLoading(false);
@@ -44,25 +46,25 @@ const DownloadDialog = ({ id, open, onClose }: DownloadDialogProps) => {
         };
 
         void loadFiles();
-    }, [id, open]);
+    }, [id, open, t]);
 
     return (
         <Dialog
             open={open}
             onClose={onClose}
             scroll={scroll}
-            aria-labelledby="scroll-dialog-title"
-            aria-describedby="scroll-dialog-download"
+            aria-labelledby={t('scroll-dialog-title')}
+            aria-describedby={t('scroll-dialog-download')}
             fullWidth
             maxWidth="sm"
         >
-            <DialogTitle id="scroll-dialog-title">Files to Download</DialogTitle>
+            <DialogTitle id="scroll-dialog-title">{t('Files to Download')}</DialogTitle>
             <DialogContent dividers={scroll === 'paper'}>
                 <DialogContentText
                     id="scroll-dialog-download"
                     tabIndex={-1}
                 >
-                    Select a file to download.
+                    {t('Select a file to download.')}
 
                 </DialogContentText>
 
@@ -90,14 +92,14 @@ const DownloadDialog = ({ id, open, onClose }: DownloadDialogProps) => {
                         ))}
                         {files.length === 0 && (
                             <ListItem>
-                                <ListItemText primary="No available file for download." />
+                                <ListItemText primary={t("No available file for download.")} />
                             </ListItem>
                         )}
                     </List>
                 )}
             </DialogContent>
             <DialogActions>
-                <Button onClick={onClose}>Close</Button>
+                <Button onClick={onClose}>{t("Close")}</Button>
             </DialogActions>
         </Dialog>
     );

@@ -9,6 +9,7 @@ import * as React from 'react';
 import { useState } from 'react';
 import styled from 'styled-components';
 import { fetchApplication, fetchApplicationDescription, type Application } from '../apis/api';
+import { useTranslation } from '../i18n';
 import BaseTypography from '../utils/BaseTypography';
 import LoadingIndicator from '../utils/LoadingIndicator';
 import DownloadDialog from './DownloadDialog';
@@ -30,6 +31,7 @@ const PostulationCard = ({
     onUpdated,
     onDeleted
 }: PostulationCardProps) => {
+    const { t } = useTranslation();
     const [openDetails, setOpenDetails] = useState(false);
     const [openEdit, setOpenEdit] = useState(false);
     const [jobDescription, setJobDescription] = useState<string>('');
@@ -50,7 +52,7 @@ const PostulationCard = ({
                 setMustKeyWords(`${keyWords.must_keywords || ''}`);
                 setNiceKeyWords(`${keyWords.nice_keywords || ''}`);
             } catch {
-                setJobDescription("Error loading job description");
+                setJobDescription(t("Error loading job description"));
             } finally {
                 setLoading(false);
             }
@@ -110,7 +112,7 @@ const PostulationCard = ({
                 <URLNotesTypography>
                     {job_url &&
                         <Link onClick={() => window.open(job_url, '_blank')}>
-                            URL job offer
+                            {t(' URL job offer')}
                         </Link>
                     }
                     <br />
@@ -118,9 +120,9 @@ const PostulationCard = ({
                 </URLNotesTypography>
             </CardContent>
             <CardActions>
-                <StyledButton onClick={handleMoreDetails} aria-label='more-details'>More details</StyledButton>
-                <StyledButton onClick={handleEdit} aria-label='edit'>Edit</StyledButton>
-                <StyledButton onClick={handleOpenDownload} startIcon={<DownloadIcon />} aria-label='download' />
+                <StyledButton onClick={handleMoreDetails} aria-label={t('more-details')}>{t('More details')}</StyledButton>
+                <StyledButton onClick={handleEdit} aria-label={t('edit')}>{t('Edit')}</StyledButton>
+                <StyledButton onClick={handleOpenDownload} startIcon={<DownloadIcon />} aria-label={t('download')} />
             </CardActions>
         </React.Fragment>
     );

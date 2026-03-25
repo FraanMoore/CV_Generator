@@ -16,6 +16,7 @@ import { useLayout } from '../hooks/useLayout';
 import AppLanguage from '../utils/AppLanguage';
 import BaseTypography from '../utils/BaseTypography';
 import NewEntryDialog, { type NewEntryData } from './NewEntryDialog';
+import { useTranslation } from '../i18n';
 
 interface Props {
     /**
@@ -35,6 +36,7 @@ const navItems = [
 ];
 
 const Navbar = (props: Props) => {
+    const { t } = useTranslation();
     const { window, onCreateEntry } = props;
     const [mobileOpen, setMobileOpen] = useState(false);
     const [newEntryOpen, setNewEntryOpen] = useState(false);
@@ -60,7 +62,7 @@ const Navbar = (props: Props) => {
     const drawer = (
         <DrawerContainer onClick={handleDrawerToggle}>
             <DrawerTitle>
-                CV Generator
+                {t('CV Generator')}
             </DrawerTitle>
             <Divider />
             <List>
@@ -96,7 +98,7 @@ const Navbar = (props: Props) => {
                 <Toolbar>
                     <StyledIconButton
                         color="inherit"
-                        aria-label="open drawer"
+                        aria-label={t("open drawer")}
                         edge="start"
                         onClick={handleDrawerToggle}
                         $isMobile={isMobile}
@@ -106,7 +108,7 @@ const Navbar = (props: Props) => {
                     <Title
                         $isMobile={isMobile}
                     >
-                        CV Generator
+                        {t('CV Generator')}
                     </Title>
                     <ButtonBox $isMobile={isMobile}>
                         {navItems.map((item) => (
