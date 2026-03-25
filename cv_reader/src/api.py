@@ -389,7 +389,7 @@ async def download_application_file(app_id: int, filename: str):
 
     return FileResponse(path=str(file_path), filename=filename)
 
-@app.get("/cv-master")
+@app.get("/edit-cv")
 async def get_cv_master():
     """Return the current cv_master.json content.
 
@@ -403,7 +403,7 @@ async def get_cv_master():
     return cv.model_dump()
 
 
-@app.put("/cv-master")
+@app.put("/edit-cv")
 async def update_cv_master(payload: dict = Body(...)):
     """Overwrite cv_master.json with the provided JSON payload.
 

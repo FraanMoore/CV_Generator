@@ -1,28 +1,37 @@
+import { FormControlLabel, Typography } from '@mui/material';
 import Button from '@mui/material/Button';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import TextField from '@mui/material/TextField';
 import * as React from 'react';
+import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
+import { fetchCvMaster, type CVMasterRaw } from '../apis/api';
 
-export type EditCVData = {
+type EditCVProps = {
+    initialData?: EditCVData;
+    onCreate?: (data: EditCVData) => void;
+};
+
+type EditCVData = {
     profile: {
         name: string;
         title: string;
-    };
-    contact: {
-        phone: string;
-        email: string;
-        links: {
-            linkedin?: string;
-            github?: string;
-            portfolio?: string;
+        contact: {
+            phone: string;
+            email: string;
+            links: {
+                linkedin: string;
+                github: string;
+                portfolio: string;
+            };
+            location: string;
         };
-        location: string;
     };
     summary: string;
-    experience: {
+    experience: Array<{
         role: string;
         company: string;
         location: string;
@@ -30,71 +39,165 @@ export type EditCVData = {
         endDate: string;
         bullets: string[];
         tags: string[];
-    }[];
-    education: {
+    }>;
+    education: Array<{
         degree: string;
         institution: string;
         year: string;
         location: string;
-    }[];
+    }>;
     skills: {
         core: string[];
         ui: string[];
         apis: string[];
         tooling: string[];
-    }
-    languages: {
+    };
+    languages: Array<{
         name: string;
         level: string;
-    }[];
+    }>;
 };
 
-type EditCVProps = {
-    onCreate?: (data: EditCVData) => void;
-};
+type Lang = 'es' | 'en';
 
+function mapCvMasterToEditData(raw: CVMasterRaw, lang: Lang): EditCVData {
+    const t = (obj: { es: string; en: string }) => obj[lang];
+    return {
+        profile: {
+            name: raw.profile.name,
+            title: t(raw.profile.title),
+            contact: {
+                phone: raw.profile.contact.phone,
+                email: raw.profile.contact.email,
+                links: {
+                    linkedin:
+                        typeof raw.profile.contact.links.linkedin === 'string'
+                            ? raw.profile.contact.links.linkedin
+                            : t(raw.profile.contact.links.linkedin),
+                    github: raw.profile.contact.links.github ?? '',
+                    portfolio: raw.profile.contact.links.portfolio ?? '',
+                },
+                location: t(raw.profile.contact.location),
+            },
+        },
+        summary: raw.summary[lang],
+        experience: raw.experience.map(exp => ({
+            role: t(exp.role),
+            company: exp.company,
+            location: t(exp.location),
+            startDate: String(exp.startDate),
+            endDate: String(exp.endDate),
+            bullets: exp.bullets[lang],
+            tags: exp.tags,
+        })),
+        education: raw.education.map(edu => ({
+            degree: t(edu.degree),
+            institution: edu.institution,
+            year: String(edu.year),
+            location: t(edu.location),
+        })),
+        skills: {
+            core: raw.skills.core,
+            ui: raw.skills.ui ?? [],
+            apis: raw.skills.apis,
+            tooling: raw.skills.tooling,
+        },
+        languages: raw.languages.map(l => ({
+            name: l.name,
+            level: t(l.level),
+        })),
+    };
+}
 const EditCV = ({ onCreate }: EditCVProps) => {
+    const { t } = useTranslation();
+    const [rawCv, setRawCv] = useState<CVMasterRaw | null>(null);
+    const [lang, setLang] = useState<Lang>('es');
     const { control, handleSubmit, reset } = useForm<EditCVData>({
         defaultValues: {
             profile: {
                 name: '',
                 title: '',
-            },
-            contact: {
-                phone: '',
-                email: '',
-                links: {
-                    linkedin: '',
-                    github: '',
-                    portfolio: '',
+                contact: {
+                    phone: '',
+                    email: '',
+                    links: { linkedin: '', github: '', portfolio: '' },
+                    location: '',
                 },
-                location: '',
             },
             summary: '',
-            experience: [],
-            education: [],
+            experience: [
+                {
+                    role: '',
+                    company: '',
+                    location: '',
+                    startDate: '',
+                    endDate: '',
+                    bullets: [''],
+                    tags: [''],
+                },
+            ],
+            education: [
+                { degree: '', institution: '', year: '', location: '' },
+            ],
             skills: {
-                core: [],
-                ui: [],
-                apis: [],
-                tooling: [],
+                core: [''],
+                ui: [''],
+                apis: [''],
+                tooling: [''],
             },
-            languages: [],
+            languages: [
+                { name: '', level: '' },
+            ],
         },
     });
 
+    useEffect(() => {
+        const load = async () => {
+            try {
+                const raw = await fetchCvMaster();
+                setRawCv(raw);
+                console.log('cv_master raw', raw);
+                const mapped = mapCvMasterToEditData(raw, 'es');
+                console.log('cv_master mapped', mapped);
+                reset(mapped);
+            } catch (e) {
+                console.error('Error loading cv_master', e);
+            }
+        };
+        load();
+    }, [reset]);
+
+    useEffect(() => {
+        if (!rawCv) return;
+        const mapped = mapCvMasterToEditData(rawCv, lang);
+        reset(mapped);
+    }, [rawCv, lang, reset]);
+
     const onSubmit = (data: EditCVData) => {
         onCreate?.(data);
-        reset();
     };
+
+    const handleSetEs = () => setLang('es');
+    const handleSetEn = () => setLang('en');
 
     return (
         <React.Fragment>
             <div>
                 <DialogContent>
                     <DialogContentText>
-                        Edit your CV details
+                        {t('Edit your CV details')}
                     </DialogContentText>
+                    <Typography>{t('Choose your CV language')}</Typography>
+                    <FormControlLabel
+                        label
+                        aria-label="Language"
+                        control={
+                            <>
+                                <Button onClick={handleSetEn}>{t('EN')}</Button>
+                                <Button onClick={handleSetEs}>{t('ES')}</Button>
+                            </>
+                        }
+                    />
                     <form onSubmit={handleSubmit(onSubmit)} id="new-entry-form">
                         <Controller
                             name="profile.name"
@@ -106,7 +209,7 @@ const EditCV = ({ onCreate }: EditCVProps) => {
                                     required
                                     margin="dense"
                                     id="name"
-                                    label="Name"
+                                    label={t('Name')}
                                     type="text"
                                     fullWidth
                                     {...field}
@@ -123,7 +226,7 @@ const EditCV = ({ onCreate }: EditCVProps) => {
                                     required
                                     margin="dense"
                                     id="title"
-                                    label="Title"
+                                    label={t('Title')}
                                     type="text"
                                     fullWidth
                                     {...field}
@@ -131,7 +234,7 @@ const EditCV = ({ onCreate }: EditCVProps) => {
                             )}
                         />
                         <Controller
-                            name="contact.phone"
+                            name="profile.contact.phone"
                             control={control}
                             rules={{ required: true }}
                             render={({ field }) => (
@@ -139,7 +242,7 @@ const EditCV = ({ onCreate }: EditCVProps) => {
                                     required
                                     margin="dense"
                                     id="phone"
-                                    label="Phone"
+                                    label={t('Phone')}
                                     type="text"
                                     fullWidth
                                     {...field}
@@ -147,7 +250,7 @@ const EditCV = ({ onCreate }: EditCVProps) => {
                             )}
                         />
                         <Controller
-                            name="contact.email"
+                            name="profile.contact.email"
                             control={control}
                             rules={{ required: true }}
                             render={({ field }) => (
@@ -155,7 +258,7 @@ const EditCV = ({ onCreate }: EditCVProps) => {
                                     required
                                     margin="dense"
                                     id="email"
-                                    label="Email"
+                                    label={t('Email')}
                                     type="email"
                                     fullWidth
                                     {...field}
@@ -163,7 +266,7 @@ const EditCV = ({ onCreate }: EditCVProps) => {
                             )}
                         />
                         <Controller
-                            name="contact.links.linkedin"
+                            name="profile.contact.links.linkedin"
                             control={control}
                             rules={{ required: true }}
                             render={({ field }) => (
@@ -171,7 +274,7 @@ const EditCV = ({ onCreate }: EditCVProps) => {
                                     required
                                     margin="dense"
                                     id="linkedin"
-                                    label="LinkedIn"
+                                    label={t('LinkedIn')}
                                     type="text"
                                     fullWidth
                                     {...field}
@@ -179,7 +282,7 @@ const EditCV = ({ onCreate }: EditCVProps) => {
                             )}
                         />
                         <Controller
-                            name="contact.links.github"
+                            name="profile.contact.links.github"
                             control={control}
                             rules={{ required: true }}
                             render={({ field }) => (
@@ -187,7 +290,7 @@ const EditCV = ({ onCreate }: EditCVProps) => {
                                     required
                                     margin="dense"
                                     id="github"
-                                    label="GitHub"
+                                    label={t('GitHub')}
                                     type="text"
                                     fullWidth
                                     {...field}
@@ -195,7 +298,7 @@ const EditCV = ({ onCreate }: EditCVProps) => {
                             )}
                         />
                         <Controller
-                            name="contact.location"
+                            name="profile.contact.location"
                             control={control}
                             rules={{ required: true }}
                             render={({ field }) => (
@@ -203,7 +306,7 @@ const EditCV = ({ onCreate }: EditCVProps) => {
                                     required
                                     margin="dense"
                                     id="location"
-                                    label="Location"
+                                    label={t('Location')}
                                     type="text"
                                     fullWidth
                                     {...field}
@@ -219,7 +322,7 @@ const EditCV = ({ onCreate }: EditCVProps) => {
                                     required
                                     margin="dense"
                                     id="summary"
-                                    label="Summary"
+                                    label={t('Summary')}
                                     type="text"
                                     fullWidth
                                     {...field}
@@ -235,7 +338,7 @@ const EditCV = ({ onCreate }: EditCVProps) => {
                                     required
                                     margin="dense"
                                     id="role"
-                                    label="Role"
+                                    label={t('Role')}
                                     type="text"
                                     fullWidth
                                     {...field}
@@ -251,7 +354,7 @@ const EditCV = ({ onCreate }: EditCVProps) => {
                                     required
                                     margin="dense"
                                     id="location"
-                                    label="Location"
+                                    label={t('Location')}
                                     type="text"
                                     fullWidth
                                     {...field}
@@ -267,7 +370,7 @@ const EditCV = ({ onCreate }: EditCVProps) => {
                                     required
                                     margin="dense"
                                     id="startDate"
-                                    label="Start Date"
+                                    label={t('Start Date')}
                                     type="text"
                                     fullWidth
                                     {...field}
@@ -283,7 +386,7 @@ const EditCV = ({ onCreate }: EditCVProps) => {
                                     required
                                     margin="dense"
                                     id="endDate"
-                                    label="End Date"
+                                    label={t('End Date')}
                                     type="text"
                                     fullWidth
                                     {...field}
@@ -299,7 +402,7 @@ const EditCV = ({ onCreate }: EditCVProps) => {
                                     required
                                     margin="dense"
                                     id="bullet"
-                                    label="Bullet Point"
+                                    label={t('Bullet Point')}
                                     type="text"
                                     fullWidth
                                     {...field}
@@ -315,7 +418,7 @@ const EditCV = ({ onCreate }: EditCVProps) => {
                                     required
                                     margin="dense"
                                     id="tag"
-                                    label="Tag"
+                                    label={t('Tag')}
                                     type="text"
                                     fullWidth
                                     {...field}
@@ -331,7 +434,7 @@ const EditCV = ({ onCreate }: EditCVProps) => {
                                     required
                                     margin="dense"
                                     id="degree"
-                                    label="Degree"
+                                    label={t('Degree')}
                                     type="text"
                                     fullWidth
                                     {...field}
@@ -347,7 +450,7 @@ const EditCV = ({ onCreate }: EditCVProps) => {
                                     required
                                     margin="dense"
                                     id="institution"
-                                    label="Institution"
+                                    label={t('Institution')}
                                     type="text"
                                     fullWidth
                                     {...field}
@@ -363,7 +466,7 @@ const EditCV = ({ onCreate }: EditCVProps) => {
                                     required
                                     margin="dense"
                                     id="year"
-                                    label="Year"
+                                    label={t('Year')}
                                     type="text"
                                     fullWidth
                                     {...field}
@@ -379,7 +482,7 @@ const EditCV = ({ onCreate }: EditCVProps) => {
                                     required
                                     margin="dense"
                                     id="location"
-                                    label="Location"
+                                    label={t('Location')}
                                     type="text"
                                     fullWidth
                                     {...field}
@@ -395,7 +498,7 @@ const EditCV = ({ onCreate }: EditCVProps) => {
                                     required
                                     margin="dense"
                                     id="core-skill"
-                                    label="Core Skill"
+                                    label={t('Core Skill')}
                                     type="text"
                                     fullWidth
                                     {...field}
@@ -411,7 +514,7 @@ const EditCV = ({ onCreate }: EditCVProps) => {
                                     required
                                     margin="dense"
                                     id="ui-skill"
-                                    label="UI Skill"
+                                    label={t('UI Skill')}
                                     type="text"
                                     fullWidth
                                     {...field}
@@ -427,7 +530,7 @@ const EditCV = ({ onCreate }: EditCVProps) => {
                                     required
                                     margin="dense"
                                     id="apis-skill"
-                                    label="APIs Skill"
+                                    label={t('APIs Skill')}
                                     type="text"
                                     fullWidth
                                     {...field}
@@ -443,7 +546,7 @@ const EditCV = ({ onCreate }: EditCVProps) => {
                                     required
                                     margin="dense"
                                     id="tooling-skill"
-                                    label="Tooling Skill"
+                                    label={t('Tooling Skill')}
                                     type="text"
                                     fullWidth
                                     {...field}
@@ -459,7 +562,7 @@ const EditCV = ({ onCreate }: EditCVProps) => {
                                     required
                                     margin="dense"
                                     id="language-name"
-                                    label="Language Name"
+                                    label={t('Language Name')}
                                     type="text"
                                     fullWidth
                                     {...field}
@@ -475,7 +578,7 @@ const EditCV = ({ onCreate }: EditCVProps) => {
                                     required
                                     margin="dense"
                                     id="language-level"
-                                    label="Language Level"
+                                    label={t('Language Level')}
                                     type="text"
                                     fullWidth
                                     {...field}
@@ -486,7 +589,7 @@ const EditCV = ({ onCreate }: EditCVProps) => {
                 </DialogContent>
                 <DialogActions>
                     <Button type="submit" form="new-entry-form">
-                        Save
+                        {t('Save')}
                     </Button>
                 </DialogActions>
             </div>
