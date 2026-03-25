@@ -8,7 +8,7 @@ import Stack from '@mui/material/Stack';
 import * as React from 'react';
 import { useState } from 'react';
 import styled from 'styled-components';
-import { fetchApplication, fetchApplicationDescription, type Application } from '../utils/api';
+import { fetchApplication, fetchApplicationDescription, type Application } from '../apis/api';
 import BaseTypography from '../utils/BaseTypography';
 import LoadingIndicator from '../utils/LoadingIndicator';
 import DownloadDialog from './DownloadDialog';

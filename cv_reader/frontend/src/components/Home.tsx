@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import styled from "styled-components";
-import { fetchApplications, updateApplication, type Application } from "../utils/api";
+import { fetchApplications, updateApplication, type Application } from "../apis/api";
 import LoadingIndicator from "../utils/LoadingIndicator";
 import Pagination from "../utils/Pagination";
 

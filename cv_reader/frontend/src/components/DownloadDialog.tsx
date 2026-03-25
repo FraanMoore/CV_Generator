@@ -10,7 +10,7 @@ import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemText from "@mui/material/ListItemText";
 import { useEffect, useState } from "react";
-import { BASE_URL, fetchApplicationFiles, type ApplicationFile } from "../utils/api";
+import { BASE_URL, fetchApplicationFiles, type ApplicationFile } from "../apis/api";
 import LoadingIndicator from "../utils/LoadingIndicator";
 
 export type DownloadDialogProps = {

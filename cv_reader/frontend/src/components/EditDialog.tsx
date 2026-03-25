@@ -10,7 +10,7 @@ import TextField from '@mui/material/TextField';
 import * as React from 'react';
 import { useState, type FormEvent } from 'react';
 import styled from 'styled-components';
-import { deleteApplication, type Application } from '../utils/api';
+import { deleteApplication, type Application } from '../apis/api';
 import StatusButton, { type status } from './StatusButton';
 
 export type NewSavedData = {
