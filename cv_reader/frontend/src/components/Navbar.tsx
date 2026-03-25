@@ -13,6 +13,7 @@ import Toolbar from '@mui/material/Toolbar';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLayout } from '../hooks/useLayout';
+import AppLanguage from '../utils/AppLanguage';
 import BaseTypography from '../utils/BaseTypography';
 import NewEntryDialog, { type NewEntryData } from './NewEntryDialog';
 
@@ -26,7 +27,12 @@ interface Props {
 }
 
 const drawerWidth = '100%';
-const navItems = ['New Entry', 'Edit CV'];
+
+const navItems = [
+    { label: 'New Entry', type: 'new-entry' as const },
+    { label: 'Edit CV', type: 'edit-cv' as const },
+    { label: 'Language', type: 'language' as const },
+];
 
 const Navbar = (props: Props) => {
     const { window, onCreateEntry } = props;
@@ -59,11 +65,21 @@ const Navbar = (props: Props) => {
             <Divider />
             <List>
                 {navItems.map((item) => (
-                    <ListItem key={item} disablePadding>
+                    <ListItem key={item.type} disablePadding>
                         <DrawerListItemButton
-                            onClick={item === 'New Entry' ? handleOpenNewEntry : handleEditCV}
+                            onClick={
+                                item.type === 'new-entry'
+                                    ? handleOpenNewEntry
+                                    : item.type === 'edit-cv'
+                                        ? handleEditCV
+                                        : undefined
+                            }
                         >
-                            <ListItemText primary={item} />
+                            {item.type === 'language' ? (
+                                <AppLanguage />
+                            ) : (
+                                <ListItemText primary={item.label} />
+                            )}
                         </DrawerListItemButton>
                     </ListItem>
                 ))}
@@ -94,12 +110,16 @@ const Navbar = (props: Props) => {
                     </Title>
                     <ButtonBox $isMobile={isMobile}>
                         {navItems.map((item) => (
-                            <Button
-                                key={item}
-                                onClick={item === 'New Entry' ? handleOpenNewEntry : handleEditCV}
-                            >
-                                {item}
-                            </Button>
+                            item.type === 'language' ? (
+                                <AppLanguage key={item.type} />
+                            ) : (
+                                <Button
+                                    key={item.type}
+                                    onClick={item.type === 'new-entry' ? handleOpenNewEntry : handleEditCV}
+                                >
+                                    {item.label}
+                                </Button>
+                            )
                         ))}
                     </ButtonBox>
                 </Toolbar>
@@ -155,6 +175,8 @@ const StyledIconButton = styled(IconButton) <{ $isMobile: boolean }>`
 
 const ButtonBox = styled(Box) <{ $isMobile: boolean }>`
     display: ${props => (props.$isMobile ? 'none' : 'block')};
+    .MuiButtonBase-root{
+    margin: 8px;}
 `;
 
 const Title = styled(BaseTypography) <{ $isMobile: boolean }>`
