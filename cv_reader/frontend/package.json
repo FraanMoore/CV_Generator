@@ -10,7 +10,8 @@
     "preview": "vite preview",
     "test": "vitest",
     "test:run": "vitest run",
-    "test:ui": "vitest --ui"
+    "test:ui": "vitest --ui",
+    "i18n:extract": "python3 ../scripts/extract_translations.py"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
