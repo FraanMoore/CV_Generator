@@ -1,4 +1,4 @@
-import { FormControlLabel, Typography } from '@mui/material';
+import { Autocomplete, FormControlLabel, Typography } from '@mui/material';
 import Button from '@mui/material/Button';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
@@ -9,6 +9,7 @@ import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { fetchCvMaster, type CVMasterRaw } from '../apis/api';
+import { allSkillsOptions, optionsAPIs, optionsTooling, optionsUI } from '../utils/SkillsOptions';
 
 type EditCVProps = {
     initialData?: EditCVData;
@@ -491,14 +492,17 @@ const EditCV = ({ onCreate }: EditCVProps) => {
                             control={control}
                             rules={{ required: true }}
                             render={({ field }) => (
-                                <TextField
-                                    required
-                                    margin="dense"
-                                    id="core-skill"
-                                    label={t('Core Skill')}
-                                    type="text"
-                                    fullWidth
-                                    {...field}
+                                <Autocomplete
+                                    multiple
+                                    options={allSkillsOptions}
+                                    onInputChange={(_, newValue) => field.onChange(newValue)}
+                                    onChange={(_, newValue) => field.onChange(newValue)}
+                                    renderInput={(params) => (
+                                        <TextField
+                                            {...params}
+                                            label={t("Skills")}
+                                        />
+                                    )}
                                 />
                             )}
                         />
@@ -507,14 +511,17 @@ const EditCV = ({ onCreate }: EditCVProps) => {
                             control={control}
                             rules={{ required: true }}
                             render={({ field }) => (
-                                <TextField
-                                    required
-                                    margin="dense"
-                                    id="ui-skill"
-                                    label={t('UI Skill')}
-                                    type="text"
-                                    fullWidth
-                                    {...field}
+                                <Autocomplete
+                                    multiple
+                                    options={optionsUI}
+                                    onInputChange={(_, newValue) => field.onChange(newValue)}
+                                    onChange={(_, newValue) => field.onChange(newValue)}
+                                    renderInput={(params) => (
+                                        <TextField
+                                            {...params}
+                                            label={t("UI Skills")}
+                                        />
+                                    )}
                                 />
                             )}
                         />
@@ -523,14 +530,17 @@ const EditCV = ({ onCreate }: EditCVProps) => {
                             control={control}
                             rules={{ required: true }}
                             render={({ field }) => (
-                                <TextField
-                                    required
-                                    margin="dense"
-                                    id="apis-skill"
-                                    label={t('APIs Skill')}
-                                    type="text"
-                                    fullWidth
-                                    {...field}
+                                <Autocomplete
+                                    multiple
+                                    options={optionsAPIs}
+                                    onInputChange={(_, newValue) => field.onChange(newValue)}
+                                    onChange={(_, newValue) => field.onChange(newValue)}
+                                    renderInput={(params) => (
+                                        <TextField
+                                            {...params}
+                                            label={t("APIs Skills")}
+                                        />
+                                    )}
                                 />
                             )}
                         />
@@ -539,14 +549,17 @@ const EditCV = ({ onCreate }: EditCVProps) => {
                             control={control}
                             rules={{ required: true }}
                             render={({ field }) => (
-                                <TextField
-                                    required
-                                    margin="dense"
-                                    id="tooling-skill"
-                                    label={t('Tooling Skill')}
-                                    type="text"
-                                    fullWidth
-                                    {...field}
+                                <Autocomplete
+                                    multiple
+                                    options={optionsTooling}
+                                    onInputChange={(_, newValue) => field.onChange(newValue)}
+                                    onChange={(_, newValue) => field.onChange(newValue)}
+                                    renderInput={(params) => (
+                                        <TextField
+                                            {...params}
+                                            label={t("Tooling Skills")}
+                                        />
+                                    )}
                                 />
                             )}
                         />
