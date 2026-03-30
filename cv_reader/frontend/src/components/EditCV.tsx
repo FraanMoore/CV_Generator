@@ -188,7 +188,7 @@ const EditCV = ({ onCreate }: EditCVProps) => {
                     </DialogContentText>
                     <Typography>{t('Choose your CV language')}</Typography>
                     <FormControlLabel
-                        label={t('Language')}
+                        label={t('')}
                         control={
                             <>
                                 <Button onClick={handleSetEn}>{t('EN')}</Button>

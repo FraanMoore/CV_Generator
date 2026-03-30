@@ -136,7 +136,7 @@ const Home = () => {
     }
 
     return (
-        <>
+        <div data-testid="home-page">
             <FiltersContainer $isDesktop={isDesktop}>
                 <Filter value={statusFilter} onChangeValues={handleChangeFilterValue} />
                 <Search roles={applications.map(app => app.role)} companies={applications.map(app => app.company)} value={searchTerm} onChange={setSearchTerm} />
@@ -158,7 +158,7 @@ const Home = () => {
                 onPageChange={(_, newPage) => setPage(newPage)}
                 onRowsPerPageChange={(e) => setRowsPerPage(parseInt(e.target.value, 10))}
             />
-        </>
+        </div>
     );
 };
 export default Home;

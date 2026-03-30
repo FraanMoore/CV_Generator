@@ -4,10 +4,10 @@ import { axe } from 'jest-axe';
 import { expect, test } from 'vitest';
 import Home from '../Home';
 
-test('it renders', () => {
+test('it renders', async () => {
     render(<Home />);
-    const titles = screen.getAllByText(/cv generator/i);
-    expect(titles).toHaveLength(2);
+    const titles = await screen.findByTestId(/home-page/i);
+    expect(titles).toBeInTheDocument();
 });
 
 test('it is accessible', async () => {

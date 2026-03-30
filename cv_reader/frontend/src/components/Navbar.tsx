@@ -13,10 +13,10 @@ import Toolbar from '@mui/material/Toolbar';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLayout } from '../hooks/useLayout';
+import { useTranslation } from '../i18n';
 import AppLanguage from '../utils/AppLanguage';
 import BaseTypography from '../utils/BaseTypography';
 import NewEntryDialog, { type NewEntryData } from './NewEntryDialog';
-import { useTranslation } from '../i18n';
 
 interface Props {
     /**
@@ -92,7 +92,7 @@ const Navbar = (props: Props) => {
     const container = window !== undefined ? () => window().document.body : undefined;
 
     return (
-        <Container >
+        <Container data-testid="navbar" >
             <CssBaseline />
             <StyledAppBar>
                 <Toolbar>
