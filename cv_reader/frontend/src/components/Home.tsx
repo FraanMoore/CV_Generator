@@ -1,24 +1,27 @@
 import { useEffect, useState } from "react";
 import styled from "styled-components";
-import { fetchApplications, updateApplication, type Application } from "../apis/api";
+import { updateApplication, type Application } from "../apis/api";
 import LoadingIndicator from "../utils/LoadingIndicator";
 import Pagination from "../utils/Pagination";
 
 import PostulationCard from "./PostulationCard";
 
 import { Box } from "@mui/material";
+import { useOutletContext } from "react-router-dom";
 import { useLayout } from "../hooks/useLayout";
 import { useTranslation } from "../i18n";
 import { cardStatusOptions } from "../utils/cardStatusOptions";
 import { Filter, type CardStatusOptionType } from "../utils/Filter";
+import type { RootLayoutContext } from "../utils/RootLayout";
 import { Search } from "../utils/Search";
 
 
 const Home = () => {
     const { t } = useTranslation();
     const { isDesktop } = useLayout();
-    const [applications, setApplications] = useState<Application[]>([]);
-    const [loading, setLoading] = useState(true);
+    const { applications, refreshApplications } = useOutletContext<RootLayoutContext>();
+
+    const [loading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
@@ -45,36 +48,20 @@ const Home = () => {
         id: number,
         data: Partial<Pick<Application, "company" | "role" | "job_url" | "status" | "notes">>
     ) => {
-        const updated = await updateApplication(id, data);
-        setApplications(prev =>
-            prev.map(app => (app.id === id ? { ...app, ...updated } : app))
-        );
+        try {
+            await updateApplication(id, data);
+            await refreshApplications();
+        } catch {
+            setError(t("Error updating application"));
+        }
     };
 
-    // const handleCreateEntry = async (data: NewEntryData) => {
-    //     try {
-    //         await uploadJobText({
-    //             company: data.company,
-    //             role: data.role,
-    //             lang: 'both',
-    //             job_url: data.jobURL,
-    //             job_text: data.jobDescription,
-    //             ai: data.AIEnabled,
-    //             ai_model: 'gpt-4.1-mini',
-    //             status: data.status,
-    //             notes: data.notes,
-    //         });
-
-    //         const apps = await fetchApplications();
-    //         setApplications(apps);
-    //     } catch (e) {
-    //         console.error("Error creating application", e);
-    //         setError("Error creating job application");
-    //     }
-    // };
-
-    const handleCardDeleted = () => {
-        fetchApplications().then(setApplications).catch(() => setError(t("Error refreshing applications after deletion")));
+    const handleCardDeleted = async () => {
+        try {
+            await refreshApplications();
+        } catch {
+            setError(t("Error refreshing applications after deletion"));
+        }
     };
 
     const filteredRows = applications
@@ -100,20 +87,6 @@ const Home = () => {
         page * rowsPerPage,
         page * rowsPerPage + rowsPerPage
     );
-
-    useEffect(() => {
-        const load = async () => {
-            try {
-                const data = await fetchApplications();
-                setApplications(data);
-            } catch {
-                setError(t("Error uploading job application"));
-            } finally {
-                setLoading(false);
-            }
-        };
-        load();
-    }, [t]);
 
     useEffect(() => {
         localStorage.setItem("statusFilter", JSON.stringify(statusFilter.map(s => s.value)));

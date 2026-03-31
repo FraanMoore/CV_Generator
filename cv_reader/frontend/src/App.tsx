@@ -8,8 +8,8 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route element={<RootLayout />}>
-          <Route path="/" element={<Home />} />
+        <Route path="/" element={<RootLayout />}>
+          <Route index element={<Home />} />
           <Route path="/edit-cv" element={<EditCV />} />
         </Route>
       </Routes>
