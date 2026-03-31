@@ -96,7 +96,7 @@ def generate_application(
         build_cv_docx(
             cv,
             "es",
-            out_path / "Francisca_Moore_CV_ES.docx",
+            out_path / f"Francisca_Moore_CV_{safe_company}_ES.docx",
             skills_ordered=skills_ordered,
             bullets_per_experience=bullets_map_es,
         )
@@ -106,7 +106,7 @@ def generate_application(
             "es",
             company,
             role,
-            out_path / "Francisca_Moore_Carta_de_Presentacion_ES.docx",
+            out_path / f"Francisca_Moore_Carta_de_Presentacion_{safe_company}_ES.docx",
         )
 
     # --- DOCX EN ---
@@ -121,7 +121,7 @@ def generate_application(
         build_cv_docx(
             cv,
             "en",
-            out_path / "Francisca_Moore_CV_EN.docx",
+            out_path / f"Francisca_Moore_CV_{safe_company}_EN.docx",
             skills_ordered=skills_ordered,
             bullets_per_experience=bullets_map_en,
         )
@@ -131,7 +131,7 @@ def generate_application(
             "en",
             company,
             role,
-            out_path / "Francisca_Moore_CoverLetter_EN.docx",
+            out_path / f"Francisca_Moore_CoverLetter_{safe_company}_EN.docx",
         )
 
     # --- index ---
