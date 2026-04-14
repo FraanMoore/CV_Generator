@@ -8,11 +8,11 @@ from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
 
 from .service import generate_application
-from .index_log import ApplicationRecord, append_to_index_csv, append_to_index_jsonl
+from .index_log import ApplicationRecord
 from datetime import datetime
 import os
 import re
-from .io_json import load_cv_master, save_cv_master
+from .io_json import load_cv_master
 from .models import CVMaster
 
 BASE_DIR = Path(__file__).resolve().parents[1]
@@ -103,7 +103,7 @@ async def upload_job_text(
     lang: str = Form("both"),
     job_url: str = Form(""),
     ai: bool = Form(True),
-    ai_model: str = Form("gpt-4.1-mini"),
+    ai_model: str = Form("claude-haiku-4-5"),
     job_text: Optional[str] = Form(None),
     job_file: Optional[UploadFile] = File(None),
     status: Optional[str] = Form(None),
