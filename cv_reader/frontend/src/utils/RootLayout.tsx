@@ -29,7 +29,7 @@ const RootLayout = () => {
             job_url: data.jobURL,
             job_text: data.jobDescription,
             ai: data.AIEnabled,
-            ai_model: "gpt-4.1-mini",
+            ai_model: "claude-haiku-4-5",
             status: data.status,
             notes: data.notes,
         });

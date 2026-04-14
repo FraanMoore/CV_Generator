@@ -30,7 +30,7 @@ def generate(
     lang: str = typer.Option("both", "--lang", help="Output language: es | en | both"),
     out_dir: str = typer.Option("output", "--out", help="Output directory"),
     ai: bool = typer.Option(False, "--ai", help="Use AI to parse offer and adapt bullets"),
-    ai_model: str = typer.Option("gpt-4.1-mini", "--ai-model", help="OpenAI model to use"),
+    ai_model: str = typer.Option("claude-haiku-4-5", "--ai-model", help="Claude model to use"),
 ) -> None:
     """Generates CV, cover letter, and summaries from a job offer."""
 

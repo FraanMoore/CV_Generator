@@ -103,7 +103,7 @@ export async function uploadJobText(payload: UploadJobPayload) {
   formData.append('lang', payload.lang ?? 'both');
   formData.append('job_url', payload.job_url ?? '');
   formData.append('ai', String(payload.ai ?? true));
-  formData.append('ai_model', payload.ai_model ?? 'gpt-4.1-mini');
+  formData.append('ai_model', payload.ai_model ?? 'claude-haiku-4-5');
   if (payload.job_text) {
     formData.append('job_text', payload.job_text);
   }
