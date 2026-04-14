@@ -9,187 +9,207 @@ from src.io_json import CVMaster
 
 LangMode = Literal["es", "en"]
 
+# El system prompt tiene UN solo trabajo: escribir bullets de experiencia probada.
+# El learning bullet se construye en Python, no en el modelo.
 SYSTEM = """You are an expert tech recruiter and resume writer.
 
-Write a CV professional summary tailored to a job offer.
+Write a professional CV summary tailored to a job offer.
 
-Strict rules:
-- Do NOT invent experience or claim you know tools/tech you don't.
-- The summary must be based on the CV content provided.
-- Job keywords are suggestions: if a keyword is NOT in the CV skills/experience, you may mention it ONLY as a learning interest, using wording like:
-  "Interested in learning: X" / "Motivated to learn: X" (never "experienced with", "skilled in", "proficient in").
+STRICT RULES:
+- Base the summary ONLY on the CV experience and skills provided.
+- Do NOT invent technologies, tools, employers, metrics, or responsibilities.
+- Do NOT claim proficiency in anything not explicitly listed in the CV context.
+- Do NOT write a learning or interests bullet — that will be added separately.
+- Use strong action language to describe what is genuinely in the CV.
 
-Output format:
-- 3-6 bullet points, plain text (no JSON).
-- First 2-5 bullets: proven experience (from CV only).
-- Do NOT write any learning or interest bullet. 
-Only rewrite the proven experience bullets.
-.
+OUTPUT FORMAT:
+- 3 to 5 bullet points, plain text.
+- Each bullet starts with "- ".
+- No headers, no JSON, no commentary.
 """
 
 
-# ----------------------------
-# Allowed terms
-# ----------------------------
+# ── Allowed tech terms (for validation only) ──────────────────────────────────
 
-def _norm(s: str) -> str:
-    s = str(s).strip().lower()
-    s = re.sub(r"\s+", " ", s)
-    return s
+_TECH_PATTERN = re.compile(
+    r"\b("
+    r"[A-Z][a-z]*(?:[A-Z][a-z]*)+|"       # CamelCase: TypeScript, FastAPI
+    r"[A-Z]{2,}(?:[A-Z0-9\.\-]+)?|"        # Acronyms: SQL, HIPAA, ASP.NET
+    r"[a-z][a-z0-9]*(?:[\.\-][a-z0-9]+)+"  # dotted/hyphenated: react-hook-form
+    r")\b"
+)
 
+def _extract_tech_terms(text: str) -> Set[str]:
+    return {m.lower() for m in _TECH_PATTERN.findall(text or "")}
 
-def _collect_cv_terms(cv: CVMaster) -> Set[str]:
-    """
-    Build set of allowed terms from CV:
-    - skills (core/apis/tooling)
-    - experience.tags
-    - bullets (es/en)
-    """
+def _collect_cv_tech_terms(cv: CVMaster) -> Set[str]:
+    """Collect only technical proper nouns from skills and experience."""
     terms: Set[str] = set()
 
     skills = getattr(cv, "skills", None)
     if skills:
         for group in ("core", "apis", "tooling"):
             for item in getattr(skills, group, []) or []:
-                terms.add(_norm(item))
+                terms.update(_extract_tech_terms(str(item)))
+                terms.add(str(item).strip().lower())
 
     for exp in getattr(cv, "experience", []) or []:
-        for t in getattr(exp, "tags", []) or []:
-            terms.add(_norm(t))
+        for tag in getattr(exp, "tags", []) or []:
+            terms.update(_extract_tech_terms(str(tag)))
+        bullets_obj = getattr(exp, "bullets", None)
+        if bullets_obj:
+            for line in (getattr(bullets_obj, "es", []) or []):
+                terms.update(_extract_tech_terms(line))
+            for line in (getattr(bullets_obj, "en", []) or []):
+                terms.update(_extract_tech_terms(line))
 
-        bullets = getattr(exp, "bullets", None)
-        if bullets:
-            for line in (getattr(bullets, "es", []) or []):
-                terms.add(_norm(line))
-            for line in (getattr(bullets, "en", []) or []):
-                terms.add(_norm(line))
-
-    # limpia vacíos
     return {t for t in terms if t}
 
 
-def _split_keywords_by_cv_presence(signals: JobSignals, cv_terms: Set[str]) -> Tuple[List[str], List[str]]:
+# ── Keyword classification ─────────────────────────────────────────────────────
+
+def _split_keywords_by_cv_presence(
+    signals: JobSignals,
+    cv_terms: Set[str],
+) -> Tuple[List[str], List[str]]:
     """
-    Split job keywords into:
-    - present: present in CV
-    - missing: not present -> can only be mentioned as "learning interest"
+    Split job keywords into present/missing using whole-word matching only.
+    Avoids substring false positives (e.g. "sql" inside "consulting").
     """
-    all_kw = list(dict.fromkeys(list(signals.must_keywords) + list(signals.nice_keywords)))
+    all_kw = list(dict.fromkeys(
+        list(signals.must_keywords) + list(signals.nice_keywords)
+    ))
     present: List[str] = []
     missing: List[str] = []
 
     for kw in all_kw:
-        nkw = _norm(kw)
-        is_present = any(nkw in t or t in nkw for t in cv_terms)
-        (present if is_present else missing).append(kw)
+        kw_terms = _extract_tech_terms(kw) or {kw.strip().lower()}
+        # A keyword is "present" only if ALL its tech terms appear in cv_terms
+        if kw_terms and kw_terms.issubset(cv_terms):
+            present.append(kw)
+        else:
+            missing.append(kw)
 
     return present, missing
 
 
-# ----------------------------
-# Validation 
-# ----------------------------
+# ── Summary context builder ───────────────────────────────────────────────────
 
-_TOKEN_RE = re.compile(r"[A-Za-z][A-Za-z0-9\.\+\-/]{1,30}")
+def _build_experience_context(cv: CVMaster, lang: LangMode) -> str:
+    """Build a rich experience context from bullets — better source than base summary."""
+    blocks = []
+    for exp in (getattr(cv, "experience", []) or [])[:3]:
+        role_obj = getattr(exp, "role", None)
+        role = ""
+        if role_obj:
+            role = getattr(role_obj, "es" if lang == "es" else "en", "") or ""
+        company = getattr(exp, "company", "")
+        bullets_obj = getattr(exp, "bullets", None)
+        bullets = []
+        if bullets_obj:
+            bullets = getattr(bullets_obj, lang, []) or []
+        bullet_lines = "\n".join(f"  · {b}" for b in bullets[:4])
+        if bullet_lines:
+            blocks.append(f"{role} at {company}:\n{bullet_lines}")
+    return "\n\n".join(blocks)
 
-_STOP = {
-    "and", "or", "the", "a", "an", "to", "of", "in", "for", "with", "on", "by",
-    "de", "y", "o", "la", "el", "los", "las", "para", "con", "en", "por", "un", "una",
-    "cv", "resume", "summary", "experience", "frontend", "backend", "software",
-}
 
+# ── Validation ────────────────────────────────────────────────────────────────
 
-def _extract_candidate_tokens(text: str) -> Set[str]:
-    return {_norm(t) for t in _TOKEN_RE.findall(text or "")}
-
-
-def _contains_disallowed_terms(text: str, allowed: Set[str], learning_label: str) -> bool:
+def _summary_invents_tech(output: str, cv_terms: Set[str]) -> bool:
     """
-    Returns True if there are disallowed terms in experience bullets.
-
-    The learning-interest bullet (the one starting with `learning_label`)
-    is allowed to contain missing job keywords.
+    Returns True only if the output introduces tech terms not found in the CV.
+    Ignores general vocabulary — only validates proper technical nouns.
     """
-    lines = [ln.strip() for ln in (text or "").splitlines() if ln.strip()]
-
-    for ln in lines:
-        if ln.lower().lstrip("- ").startswith(learning_label.lower()):
-            continue
-
-        candidates = _extract_candidate_tokens(ln)
-        for tok in candidates:
-            if tok in _STOP:
-                continue
-            if tok not in allowed:
-                return True
-
+    output_terms = _extract_tech_terms(output)
+    invented = output_terms - cv_terms
+    if invented:
+        print(f"[build_summary] Rejected — invented terms: {invented}")
+        return True
     return False
 
+
+# ── Learning bullet ───────────────────────────────────────────────────────────
+
 def _build_learning_bullet(
-    missing_kw: list[str],
+    missing_kw: List[str],
     lang: LangMode,
     max_items: int = 5,
 ) -> str | None:
     if not missing_kw:
         return None
-
     items = missing_kw[:max_items]
-
     if lang == "es":
         return f"- Interesada en aprender / profundizar: {', '.join(items)}"
     else:
         return f"- Interested in learning / growing in: {', '.join(items)}"
 
 
-# ----------------------------
-# Main
-# ----------------------------
+# ── Truncation ───────────────────────────────────────────────────────────────
 
-def build_summary_ai(cv: CVMaster, lang: LangMode, signals: JobSignals, model: str) -> str:
-    base_lines = cv.summary.es if lang == "es" else cv.summary.en
-    base_summary = "\n".join(f"- {line}" for line in base_lines)
+def _truncate_summary(text: str, max_chars: int = 730) -> str:
+    """Truncate summary to max_chars without cutting mid-sentence."""
+    if len(text) <= max_chars:
+        return text
+    truncated = text[:max_chars]
+    # Cut at last complete bullet (last newline before limit)
+    last_newline = truncated.rfind("\n")
+    if last_newline > 0:
+        return truncated[:last_newline].strip()
+    # Fallback: cut at last space to avoid mid-word cut
+    last_space = truncated.rfind(" ")
+    return truncated[:last_space].strip() if last_space > 0 else truncated.strip()
 
-    allowed_terms = _collect_cv_terms(cv)
-    present_kw, missing_kw = _split_keywords_by_cv_presence(signals, allowed_terms)
 
-    learning_label = "Interesada en aprender / profundizar" if lang == "es" else "Interested in learning / growing in"
-    
-    allowed_pretty = ", ".join(sorted(list(allowed_terms))[:80])
+# ── Main ──────────────────────────────────────────────────────────────────────
 
-    user = f"""
-    Language: {lang}
+def build_summary_ai(
+    cv: CVMaster,
+    lang: LangMode,
+    signals: JobSignals,
+    model: str,
+) -> str:
+    cv_terms = _collect_cv_tech_terms(cv)
+    present_kw, missing_kw = _split_keywords_by_cv_presence(signals, cv_terms)
+    experience_context = _build_experience_context(cv, lang)
 
-    Allowed terms from CV (DO NOT claim anything outside these terms):
-    {allowed_pretty}
+    # Skills as structured context, not a flat dump
+    skills = getattr(cv, "skills", None)
+    all_skills: List[str] = []
+    if skills:
+        for group in ("core", "apis", "tooling"):
+            all_skills += [str(s) for s in (getattr(skills, group, []) or [])]
 
-    CV base summary (source of truth):
-    {base_summary}
+    user = f"""Language: {lang}
 
-    Job keywords already supported by CV (can be strengths):
-    {present_kw}
+=== CV SKILLS ===
+{', '.join(all_skills)}
 
-    Job keywords NOT supported by CV (only mention as learning interests):
-    {missing_kw}
+=== CV EXPERIENCE ===
+{experience_context}
 
-    Task:
-    Write 3-5 bullets.
-    - Bullets 1-6: proven experience only (must be consistent with CV base summary).
-    - Do NOT add technologies to experience bullets if they are not explicitly present in the CV.
-    - Optional last bullet: start with "{learning_label}:" and list 3-6 items from missing keywords.
-    Return only bullets as plain text.
-    """
+=== JOB KEYWORDS IN CV ===
+{', '.join(present_kw) or '(none)'}
+
+=== JOB KEYWORDS NOT IN CV (do NOT mention in bullets) ===
+{', '.join(missing_kw) or '(none)'}
+
+Task:
+Write 3 to 5 bullets summarizing this candidate's profile for the job.
+Focus on the job keywords that ARE present in the CV.
+Do not mention or allude to: {', '.join(missing_kw[:8]) or 'nothing'}.
+Keep the total summary under 700 characters (leave room for the learning bullet).
+Return only bullet lines starting with "- ".
+"""
 
     text = chat_text(model=model, system=SYSTEM, user=user)
     out = (text or "").strip()
 
-    if _contains_disallowed_terms(out, allowed_terms, learning_label):
-        experience_part = base_summary.strip()
-    else:
-        experience_part = out
+    # Fallback to base summary if model invented tech terms
+    if _summary_invents_tech(out, cv_terms):
+        base_lines = getattr(cv.summary, lang, []) or []
+        out = "\n".join(f"- {line}" for line in base_lines)
 
     learning_bullet = _build_learning_bullet(missing_kw, lang)
-
-    if learning_bullet:
-        return experience_part + "\n" + learning_bullet
-
-    return experience_part
+    result = out + "\n" + learning_bullet if learning_bullet else out
+    return _truncate_summary(result)

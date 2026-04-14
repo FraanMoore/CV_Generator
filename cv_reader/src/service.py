@@ -58,15 +58,15 @@ def generate_application(
     out_path.mkdir(parents=True, exist_ok=True)
 
     # --- summaries ---
+    # cv is treated as immutable from this point; AI summaries are kept in a
+    # separate dict to avoid contaminating tailor_bullets_ai with invented terms.
+    summaries: Dict[str, str] = {}
+
     if lang in ("es", "both"):
         if ai:
             ai_es = build_summary_ai(cv, "es", signals, ai_model)
             (out_path / "Resumen_ES.txt").write_text(ai_es, encoding="utf-8")
-            cv.summary.es = [
-                line.lstrip("- ").strip()
-                for line in ai_es.splitlines()
-                if line.strip()
-            ]
+            summaries["es"] = ai_es
         else:
             s = build_summary(cv, "es")
             (out_path / "Resumen_ES.txt").write_text(s.text, encoding="utf-8")
@@ -75,11 +75,7 @@ def generate_application(
         if ai:
             ai_en = build_summary_ai(cv, "en", signals, ai_model)
             (out_path / "Resumen_EN.txt").write_text(ai_en, encoding="utf-8")
-            cv.summary.en = [
-                line.lstrip("- ").strip()
-                for line in ai_en.splitlines()
-                if line.strip()
-            ]
+            summaries["en"] = ai_en
         else:
             s = build_summary(cv, "en")
             (out_path / "Summary_EN.txt").write_text(s.text, encoding="utf-8")
@@ -90,7 +86,10 @@ def generate_application(
         for exp in cv.experience:
             selected = select_bullets(exp, "es", signals, max_bullets=len(exp.bullets.es))
             if ai:
-                selected = tailor_bullets_ai(cv, exp, "es", signals, ai_model, selected)
+                tech_tags = {t.lower() for t in (getattr(exp, "tags", []) or [])}
+                has_overlap = bool(tech_tags & {k.lower() for k in signals.all_keywords})
+                if has_overlap:
+                    selected = tailor_bullets_ai(cv, exp, "es", signals, ai_model, selected)
             bullets_map_es[exp.company] = selected
 
         build_cv_docx(
@@ -99,6 +98,7 @@ def generate_application(
             out_path / f"Francisca_Moore_CV_{safe_company}_ES.docx",
             skills_ordered=skills_ordered,
             bullets_per_experience=bullets_map_es,
+            summary_override=summaries.get("es"),
         )
 
         build_cover_letter_docx(
@@ -115,7 +115,10 @@ def generate_application(
         for exp in cv.experience:
             selected = select_bullets(exp, "en", signals, max_bullets=len(exp.bullets.en))
             if ai:
-                selected = tailor_bullets_ai(cv, exp, "en", signals, ai_model, selected)
+                tech_tags = {t.lower() for t in (getattr(exp, "tags", []) or [])}
+                has_overlap = bool(tech_tags & {k.lower() for k in signals.all_keywords})
+                if has_overlap:
+                    selected = tailor_bullets_ai(cv, exp, "en", signals, ai_model, selected)
             bullets_map_en[exp.company] = selected
 
         build_cv_docx(
@@ -124,6 +127,7 @@ def generate_application(
             out_path / f"Francisca_Moore_CV_{safe_company}_EN.docx",
             skills_ordered=skills_ordered,
             bullets_per_experience=bullets_map_en,
+            summary_override=summaries.get("en"),
         )
 
         build_cover_letter_docx(
