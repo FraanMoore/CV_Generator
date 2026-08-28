@@ -159,10 +159,7 @@
     "tooling": [
             "Jest",
             "React Testing Library",
-            "Git",
-            "GitHub",
-            "ESLint",
-            "Prettier"
+            "GitHub Actions"
           ]
   },
   "languages": [
