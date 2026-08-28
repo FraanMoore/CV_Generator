@@ -47,7 +47,7 @@ Start the backend API from `cv_reader`:
 ```bash
 cd cv_reader
 source .venv/bin/activate
-uvicorn src.api:app --reaload --host 127.0.0.1 --port 8000
+uvicorn src.api:app --reload --port 8000
 ```
 
 In a second terminal, start the frontend:
