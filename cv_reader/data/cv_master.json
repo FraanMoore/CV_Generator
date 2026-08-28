@@ -2,13 +2,13 @@
   "meta": {
     "version": 1,
     "source": "Francisca Moore CV.pdf",
-    "last_updated": "2026-01-20"
+    "last_updated": "2026-08-28"
   },
   "profile": {
     "name": "Francisca Moore",
     "title": {
-      "es": "Desarrollador de Software Frontend",
-      "en": "Frontend Software Developer"
+      "es": "Full Stack Developer",
+      "en": "Full Stack Developer"
     },
     "contact": {
       "phone": "+56 9 7351 8292",
@@ -28,18 +28,16 @@
   },
   "summary": {
     "es": [
-      "Desarrolladora de software frontend especializada en React y TypeScript, con experiencia profesional en la construcción de aplicaciones web complejas. Enfocada en crear interfaces mantenibles, optimizar el rendimiento y resolver desafíos técnicos con una mentalidad orientada al producto.",
-
-      "Experta en el manejo avanzado de estado, integración de APIs y colaboración estrecha con equipos de diseño y backend, priorizando siempre la calidad del código, la escalabilidad y la experiencia del usuario.",
-
-      "Busco integrarme a un equipo donde pueda potenciar mi crecimiento técnico y aportar al desarrollo de productos sólidos y de alto impacto."
+      "Desarrolladora de Full Stack orientada en React y TypeScript, con experiencia profesional en la construcción de aplicaciones web complejas.",
+      "Enfocada en crear interfaces mantenibles, optimizar el rendimiento y resolver desafíos técnicos con una mentalidad orientada al producto.",
+      "Manejo avanzado de estado, integración de APIs y colaboración estrecha con equipos de diseño, frontend y backend, priorizando siempre la calidad del código, la escalabilidad y la experiencia del usuario.",
+      "Busco integrarme a un equipo donde pueda potenciar mi crecimiento técnico y aportar al desarrollo de productos sólidos."
     ],
     "en": [
-      "Frontend Software Developer specialized in React and TypeScript, with professional experience building complex web applications. Focused on creating maintainable interfaces, optimizing performance, and solving technical challenges with a strong product-oriented mindset.",
-
-      "Expert in advanced state management, API integration, and cross-functional collaboration with design and backend teams, consistently prioritizing code quality and user experience.",
-
-      "Seeking to join a high-performing team where I can continue growing technically while contributing to the development of robust and high-impact products."
+      "Full Stack Developer oriented in React and TypeScript, with professional experience building complex web applications.",
+      "Focused on creating maintainable interfaces, optimizing performance, and solving technical challenges with a strong product-oriented mindset.",
+      "Advanced state management, API integration, and cross-functional collaboration with design and backend teams, consistently prioritizing code quality and user experience.",
+      "Seeking to join a team where I can continue growing technically while contributing to the development of robust products."
     ]
   },
   "experience": [
@@ -57,21 +55,18 @@
       "end_year": 2026,
       "bullets": {
         "es": [
-          "Desarrollo y mantenimiento de aplicaciones escalables y estables, garantizando altos estándares de calidad.",
-          "Implementación de nuevas funcionalidades y mejoras continuas directamente en entornos productivos.",
-          "Integración de APIs y desarrollo de lógica de negocio compleja, asegurando la sincronización eficiente de datos.",
-          "Optimización y refactorización de código, con un enfoque en la reducción de errores mediante pruebas unitarias y de integración (Jest y React Testing Library).",
-          "Colaboración con equipos multidisciplinarios para el análisis de requerimientos y la definición de arquitecturas técnicas.",
-          "Aplicación de buenas prácticas de desarrollo, priorizando el rendimiento y la sostenibilidad del software a largo plazo."
-
+          "Refactorización de lógica de negocio hacia custom hooks especializados, reduciendo el acoplamiento entre componentes.",
+          "Separación entre server state y UI state con RTK Query, evitando duplicar datos en Redux y priorizando estado derivado.",
+          "Integración de APIs sobre backend Rails desde React, con capas de transformación para desacoplar componentes del contrato del backend.",
+          "Desarrollo de formularios dinámicos con React Hook Form, incluyendo manejo de valores personalizados.",
+          "Separación de responsabilidades (fetching, lógica de negocio, estado y presentación) orientada a testabilidad."
         ],
         "en": [
-          "Develop and maintain scalable software applications with a steadfast focus on stability, performance, and code quality",
-          "Implement new features and continuous improvements within production environments, ensuring zero-downtime deployments.",
-          "Architect and manage business logic through seamless API integration and consumption.",
-          "Execute bug fixes, refactoring, and code optimizations, leveraging unit and integration testing (Jest & React Testing Library) to minimize regressions.",
-          "Collaborate with cross-functional teams to analyze requirements and define robust technical solutions.",
-          "Uphold high development standards, prioritizing performance and long-term software sustainability."
+          "Refactored business logic into specialized custom hooks, reducing coupling between components.",
+          "Separated server state from UI state using RTK Query, avoiding data duplication in Redux and favoring derived state.",
+          "Integrated APIs built on a Rails backend from React, implementing transformation layers to decouple components from the backend contract.",
+          "Built dynamic forms with React Hook Form, including handling of custom values.",
+          "Separated concerns (fetching, business logic, state, and presentation) with a focus on testability."
         ]
       },
       "tags": ["software-development", "frontend", "product-mindset", "performance", "apis"]
@@ -133,6 +128,32 @@
       }
     }
   ],
+  "projects": [
+    {
+      "name": {
+        "es": "CV_Generator",
+        "en": "CV_Generator"
+      },
+      "description": {
+        "es": "Generador personalizado de CVs automatizado.",
+        "en": "Automated custom CV generator."
+      },
+      "technologies": ["TypeScript", "React", "Python CLI", "FastAPI", "Material UI (MUI)"],
+      "link": "https://github.com/FraanMoore/CV_Generator"
+    },
+    {
+      "name": {
+        "es": "Shelfie",
+        "en": "Shelfie"
+      },
+      "description": {
+        "es": "Aplicación para gestionar estanterías virtuales.",
+        "en": "Application to manage virtual shelves."
+      },
+      "technologies": ["TypeScript", "React+Vite", "Python", "FastAPI", "PostgreSQL", "SQLAlchemy", "TMDB API", "Open Library API", "Tailwind CSS"],
+      "link": "https://github.com/FraanMoore/shelfie"
+    }
+  ],
   "skills": {
     "core": [
               "JavaScript (ES6+)",
@@ -141,7 +162,12 @@
               "Redux",
               "React Hooks",
               "RTK Query",
-              "react-hook-form"
+              "react-hook-form",
+              "React Router",
+              "Python",
+              "FastAPI",
+              "PostgreSQL",
+              "SQLAlchemy"
              ],
     "ui": [
             "HTML",
@@ -150,16 +176,19 @@
             "CSS3",
             "Styled Components",
             "Material UI (MUI)",
-            "Bootstrap"
+            "Bootstrap",
+            "Tailwind CSS"
           ],
     "apis": [
             "REST APIs",
-            "OpenAI API"
+            "OpenAI API",
+            "Anthropic SDK"
           ],
     "tooling": [
             "Jest",
             "React Testing Library",
-            "GitHub Actions"
+            "GitHub Actions",
+            "Git"
           ]
   },
   "languages": [
