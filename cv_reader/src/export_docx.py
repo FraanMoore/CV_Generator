@@ -3,6 +3,7 @@ from __future__ import annotations
 import re
 from pathlib import Path
 from typing import Iterable, Optional, cast
+import os
 
 import docx
 from docx.document import Document as DocxDocument
@@ -17,16 +18,18 @@ from docx.text.paragraph import Paragraph
 
 from src.models import CVMaster
 
+EDUCATION_CERT_URL = os.getenv("EDUCATION_CERT_URL", "")
+
 COLOR_TITLE = RGBColor(0x22, 0x7A, 0xAF)
 COLOR_TEXT  = RGBColor(0x00, 0x00, 0x00)
-COLOR_SUB_TITLE = RGBColor(0x53, 0x53, 0x53)
-FONT_NAME = "Avenir Next"
-FONT_NAME_DEMI_BOLD = "Avenir Next Demi Bold"
-FONT_NAME_MEDIUM = "Avenir Next Medium"
+COLOR_SUB_TITLE = RGBColor(0x00, 0x00, 0x00)
+FONT_NAME = "Times New Roman"
+FONT_NAME_DEMI_BOLD = "Times New Roman Bold"
+FONT_NAME_MEDIUM = "Times New Roman bold"
 FONT_SIZE_NAME = 22
 FONT_SIZE_TITLES = 12
-FONT_SIZE_BODY = 10
-FONT_SIZE_HYPERLINK = 9
+FONT_SIZE_BODY = 11
+FONT_SIZE_HYPERLINK = 10
 
 def _flatten_sections_to_one_column(doc: DocxDocument) -> None:
     W_NS = "http://schemas.openxmlformats.org/wordprocessingml/2006/main"
@@ -611,7 +614,9 @@ def _replace_placeholder_bullets(
     doc: DocxDocument,
     placeholder: str,
     lines: list[str],
+    lang: str,
     bullet_style: str = "Bullet 2",
+    link_label: str | None = None,
 ) -> bool:
     """
     Replace {{PLACEHOLDER}} with multiple bullet paragraphs.
@@ -621,6 +626,7 @@ def _replace_placeholder_bullets(
     - Uses an existing bullet style from the template (e.g., "Bullet 2")
     """
     token = f"{{{{{placeholder}}}}}"
+    labelCertification = link_label or ("See certifications" if lang == "en" else " Ver certificaciones")
 
     style_name = _first_existing_style(
         doc,
@@ -719,6 +725,54 @@ def _replace_placeholder_projects_blocks(
 
         return True
 
+    return False
+
+def _replace_placeholder_education_with_link(
+        doc,
+        placeholder,
+        lines,
+        *,
+        link_text,
+        link_url,
+        bullet_style="Bullet 2",
+        font_name=FONT_NAME,
+        font_size=FONT_SIZE_BODY,
+        color=COLOR_TEXT,
+):
+    token = f"{{{{{placeholder}}}}}"
+    style_name = _first_existing_style(doc, candidates=[bullet_style])
+    cleaned = [_strip_leading_bullet_markers(line) for line in lines if (line or "").strip()]
+
+    for p in _iter_paragraphs(doc):
+        if token not in p.text:
+            continue
+
+        _clear_paragraph(p)
+        if not cleaned:
+            return True
+
+        if style_name:
+            p.style = style_name
+        p.add_run(cleaned[0])
+        _apply_font_to_paragraph(p, font_name, font_size)
+        p.paragraph_format.space_before = Pt(0)
+        p.paragraph_format.space_after = Pt(0)
+        p.paragraph_format.line_spacing = 1.0
+
+        cur = p
+        for ln in cleaned[1:]:
+            cur = _insert_paragraph_after(cur, ln, style=style_name)
+            cur.paragraph_format.space_before = Pt(0)
+            cur.paragraph_format.space_after = Pt(0)
+            cur.paragraph_format.line_spacing = 1.0
+
+        link_p = _insert_paragraph_after(cur, "", style=style_name)
+        if link_url:
+            _add_hyperlink(link_p, text=link_text, url=link_url, font_name=font_name, font_size=font_size, color=color, underline=True)
+            link_p.paragraph_format.space_before = Pt(0)
+            link_p.paragraph_format.space_after = Pt(0)
+            link_p.paragraph_format.line_spacing = 1.0
+        return True
     return False
 
 # ============================================================
@@ -820,7 +874,7 @@ def build_cv_docx(
     _replace_placeholder_title(doc, "summary_title", titles["summary_title"])
     _replace_placeholder_title(doc, "Experience_title", titles["Experience_title"])
     _replace_placeholder_title(doc, "skills_title", titles["skills_title"])
-    _replace_placeholder_title(doc, "language_title", titles["language_title"])
+    _replace_placeholder_title(doc, "LANGUAGE_TITLE", titles["language_title"])
     _replace_placeholder_title(doc, "Projects_title", titles["projects_title"])
 
     _replace_placeholder_paragraph(doc, "SUMMARY", _summary_as_paragraph(cv, lang, max_lines=4))
@@ -838,11 +892,16 @@ def build_cv_docx(
         job_title_color=COLOR_SUB_TITLE,
     )
     _replace_placeholder_title(doc, "Education_title", titles["Education_title"])
-    _replace_placeholder_bullets(doc, "EDUCATION", _education_lines(cv, lang), bullet_style="Bullet 2")
     _replace_placeholder_projects_blocks(doc, "PROJECTS", cv, lang)
     _replace_placeholder_skills_categorized(doc, "SKILLS", cv, lang)
-    _replace_placeholder_bullets(doc, "LANGUAGES", _languages_lines(cv, lang), bullet_style="Bullet 2")
-
+    _replace_placeholder_bullets(doc, "LANGUAGES", _languages_lines(cv, lang), bullet_style="Bullet 2", lang=lang)
+    _replace_placeholder_education_with_link(doc,
+                                             "EDUCATION", 
+                                             _education_lines(cv, lang), 
+                                             link_text=("View certificates" if lang == "en" else "Ver certificados"),
+                                             link_url=EDUCATION_CERT_URL,
+                                             bullet_style="Bullet 2"
+                                             )
 
     _set_footer_hyperlink_i18n(
     doc,
