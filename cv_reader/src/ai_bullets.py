@@ -46,7 +46,7 @@ def _build_allowed_tech(cv: Any, bullets_in: List[str]) -> Set[str]:
     # From CV skills
     skills = getattr(cv, "skills", None)
     if skills:
-        for group in ("core", "apis", "tooling"):
+        for group in ("core","backend", "apis", "tooling"):
             for item in getattr(skills, group, []) or []:
                 allowed.update(_extract_tech_terms(str(item)))
                 allowed.add(str(item).strip().lower())

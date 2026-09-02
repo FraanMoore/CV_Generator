@@ -74,8 +74,27 @@ class Education(BaseModel):
   location: LocationI18n
 
 
+class ProjectNameI18n(BaseModel):
+  es: str
+  en: str
+
+
+class ProjectDescriptionI18n(BaseModel):
+  es: str
+  en: str
+
+
+class Project(BaseModel):
+  name: ProjectNameI18n
+  description: ProjectDescriptionI18n
+  technologies: List[str] = []
+  link: str
+
+
 class Skills(BaseModel):
   core: List[str] = []
+  backend: List[str] = []
+  ui: List[str] = []
   apis: List[str] = []
   tooling: List[str] = []
 
@@ -96,6 +115,7 @@ class CVMaster(BaseModel):
   summary: SummaryI18n
   experience: List[Experience]
   education: List[Education]
+  projects: List[Project] = []
   skills: Skills
   languages: List[Language]
 

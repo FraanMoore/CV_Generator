@@ -70,6 +70,7 @@ export type CVMasterRaw = {
     }>;
     skills: {
         core: string[];
+        backend: string[];
         ui: string[];
         apis: string[];
         tooling: string[];
@@ -77,6 +78,12 @@ export type CVMasterRaw = {
     languages: Array<{
         name: string;
         level: {es: string; en: string};
+    }>;
+    projects: Array<{
+        name: {es: string; en: string};
+        description: {es: string; en: string};
+        technologies: string[];
+        link: string;
     }>;
 };
 

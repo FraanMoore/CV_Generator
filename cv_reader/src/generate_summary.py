@@ -27,6 +27,6 @@ def build_summary(cv: CVMaster, lang: Lang) -> SummaryOutput:
     *summary_lines,
     "",
     "Skills:",
-    ", ".join(cv.skills.core + cv.skills.apis + cv.skills.tooling),
+    ", ".join(cv.skills.core + cv.skills.backend + cv.skills.apis + cv.skills.tooling),
   ])
   return SummaryOutput(text=text)

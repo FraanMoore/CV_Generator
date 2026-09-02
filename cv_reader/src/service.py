@@ -98,7 +98,6 @@ def generate_application(
             out_path / f"Francisca_Moore_CV_{safe_company}_ES.docx",
             skills_ordered=skills_ordered,
             bullets_per_experience=bullets_map_es,
-            summary_override=summaries.get("es"),
         )
 
         build_cover_letter_docx(
@@ -127,7 +126,6 @@ def generate_application(
             out_path / f"Francisca_Moore_CV_{safe_company}_EN.docx",
             skills_ordered=skills_ordered,
             bullets_per_experience=bullets_map_en,
-            summary_override=summaries.get("en"),
         )
 
         build_cover_letter_docx(

@@ -28,6 +28,19 @@ FONT_SIZE_TITLES = 12
 FONT_SIZE_BODY = 10
 FONT_SIZE_HYPERLINK = 9
 
+def _flatten_sections_to_one_column(doc: DocxDocument) -> None:
+    W_NS = "http://schemas.openxmlformats.org/wordprocessingml/2006/main"
+    for section in doc.sections:
+        sectPr = section._sectPr
+        cols = sectPr.find(f"{{{W_NS}}}cols")
+        if cols is not None:
+            for attr in ("num", "space", "equalWidth"):
+                key = f"{{{W_NS}}}{attr}"
+                if key in cols.attrib:
+                    del cols.attrib[key]
+            cols.set(f"{{{W_NS}}}num", "1")
+
+            
 def _set_page_layout(
     doc: DocxDocument,
     *,
@@ -165,45 +178,6 @@ def _set_footer_hyperlink_i18n(
             color=color,
             underline=True,
         )
-
-def _replace_placeholder_title_hyperlink(
-    doc: DocxDocument,
-    placeholder: str,
-    *,
-    text: str,
-    url: str,
-    icon: str = "🔗",
-    font_name: str = FONT_NAME_DEMI_BOLD,
-    font_size: float = FONT_SIZE_TITLES,
-    color: RGBColor = COLOR_TITLE,
-) -> bool:
-    token = f"{{{{{placeholder}}}}}"
-
-    for p in _iter_paragraphs(doc):
-        if token not in p.text:
-            continue
-
-        _clear_paragraph(p)
-
-        _add_hyperlink(
-            p,
-            text=text,
-            url=url,
-            font_name=font_name,
-            font_size=font_size,
-            color=color,
-            underline=True,
-        )
-        r = p.add_run(f" {icon}")
-        r.font.name = font_name
-        r.font.size = Pt(font_size)
-        r.font.color.rgb = color
-        r.bold = False
-
-        p.alignment = WD_PARAGRAPH_ALIGNMENT.LEFT
-        return True
-
-    return False
 
 # ============================================================
 # Styles
@@ -343,15 +317,16 @@ def _add_bold_paragraph_after(
     p.paragraph_format.line_spacing = 1.0
     return p
 
-def _clear_run_char_spacing(run) -> None:
-    rPr = run._r.get_or_add_rPr()
-    spacing = rPr.find(qn("w:spacing"))
-    if spacing is not None:
-        rPr.remove(spacing)
-
 # ============================================================
 # Placeholder replacement
 # ============================================================
+
+SKILL_LABELS = {
+    "es": {"core": "Frontend", "backend": "Backend", "ui": "UI", "apis": "APIs", "tooling": "Tooling"},
+    "en": {"core": "Frontend", "backend": "Backend", "ui": "UI", "apis": "APIs", "tooling": "Tooling"},
+}
+
+SKILL_ORDER = ["core", "backend", "ui", "apis", "tooling"]
 
 def _replace_placeholder_name(
     doc: DocxDocument,
@@ -485,29 +460,48 @@ def _replace_placeholder_paragraph(doc: DocxDocument, placeholder: str, paragrap
             return True
     return False
 
-def _replace_placeholder_inline_left(
+def _replace_placeholder_skills_categorized(
     doc: DocxDocument,
     placeholder: str,
-    text: str,
+    cv: CVMaster,
+    lang: str,
     *,
     font_name: str = FONT_NAME,
     font_size: float = FONT_SIZE_BODY,
 ) -> bool:
     token = f"{{{{{placeholder}}}}}"
+    labels = SKILL_LABELS[lang]
+ 
     for p in _iter_paragraphs(doc):
-        if token in p.text:
-            _clear_paragraph(p)
-
-            p.alignment = WD_PARAGRAPH_ALIGNMENT.LEFT
-
-            r = p.add_run(text)
-            _apply_font_to_run(r, font_name=font_name, font_size_pt=font_size, bold=False, color=COLOR_TEXT)
-            _clear_run_char_spacing(r)
-
-            p.paragraph_format.space_before = Pt(0)
-            p.paragraph_format.space_after = Pt(0)
-            p.paragraph_format.line_spacing = 1.0
-            return True
+        if token not in p.text:
+            continue
+ 
+        _clear_paragraph(p)
+        anchor = p
+        first = True
+ 
+        for key in SKILL_ORDER:
+            items = getattr(cv.skills, key, None)
+            if not items:
+                continue
+ 
+            target = anchor if first else _insert_paragraph_after(anchor, text="", style=None)
+ 
+            target = anchor if first else _insert_paragraph_after(anchor, text="", style=None)
+            r1 = target.add_run(f"{labels[key]}: ")
+            _apply_font_to_run(r1, font_name, font_size, bold=True, color=COLOR_TEXT)
+            r2 = target.add_run(", ".join(items))
+            _apply_font_to_run(r2, font_name, font_size, bold=False, color=COLOR_TEXT)
+ 
+            target.paragraph_format.space_before = Pt(0)
+            target.paragraph_format.space_after = Pt(2)
+            target.paragraph_format.line_spacing = 1.0
+ 
+            anchor = target
+            first = False
+ 
+        return True
+ 
     return False
 
 def _replace_placeholder_experience_blocks(
@@ -673,13 +667,68 @@ def _replace_placeholder_bullets(
 
     return False
 
+def _replace_placeholder_projects_blocks(
+        doc: DocxDocument,
+        placeholder: str,
+        cv: CVMaster,
+        lang: str,
+        *,
+        font_name: str = FONT_NAME,
+        font_size: float = FONT_SIZE_BODY,
+        link_label: str | None = None,
+) -> bool:
+    token = f"{{{{{placeholder}}}}}"
+    label = link_label or ("GitHub" if lang == "en" else " Ver en GitHub")
+
+    for p in _iter_paragraphs(doc):
+        if token not in p.text:
+            continue
+
+        _clear_paragraph(p)
+        anchor = p
+        first = True
+
+        for proj in cv.projects:
+            name = proj.name.es if lang == "es" else proj.name.en
+            desc = proj.description.es if lang == "es" else proj.description.en
+            techs = ", ".join(proj.technologies)
+
+            target = anchor if first else _insert_paragraph_after(anchor, "", style=None)
+            r1 = target.add_run(f"{name} - ")
+            _apply_font_to_run(r1, font_name, font_size, bold=True, color=COLOR_TEXT)
+            _add_hyperlink(
+                target, text=label, url=proj.link,
+                font_name=font_name, font_size=font_size - 1,
+                color=COLOR_TEXT, underline=True
+            )
+            target.paragraph_format.space_before = Pt(3)
+            target.paragraph_format.space_after = Pt(0)
+            anchor = target
+            first = False
+
+            desc_p = _insert_paragraph_after(anchor, desc, style=None)
+            _apply_font_to_paragraph(desc_p, font_name, font_size, color=COLOR_TEXT)
+            desc_p.paragraph_format.space_before = Pt(0)
+            anchor = desc_p
+
+            if techs:
+                tech_p = _insert_paragraph_after(anchor, techs, style=None)
+                _apply_font_to_paragraph(tech_p, font_name, font_size, color=COLOR_TEXT)
+                tech_p.paragraph_format.space_before = Pt(1)
+                anchor = tech_p
+
+        return True
+
+    return False
+
 # ============================================================
 # CV -> blocks
 # ============================================================
 
-def _summary_as_paragraph(cv: CVMaster, lang: str) -> str:
+def _summary_as_paragraph(cv: CVMaster, lang: str, max_lines: int = 4) -> str:
     lines = cv.summary.es if lang == "es" else cv.summary.en
-    return " ".join(_strip_leading_bullet_markers(line) for line in lines if (line or "").strip()).strip()
+    trimmed = lines[:max_lines]
+    return " ".join(_strip_leading_bullet_markers(line) for line in trimmed if (line or "").strip()).strip()
 
 def _education_lines(cv: CVMaster, lang: str) -> list[str]:
     out: list[str] = []
@@ -707,6 +756,7 @@ TITLES_I18N = {
         "Education_title": "Educación y Certificaciones",
         "skills_title": "Habilidades",
         "language_title": "Idiomas",
+        "projects_title": "Proyectos",
     },
     "en": {
         "summary_title": "About Me",
@@ -714,6 +764,7 @@ TITLES_I18N = {
         "Education_title": "Education & Certifications",
         "skills_title": "Skills",
         "language_title": "Languages",
+        "projects_title": "Projects",
     },
 }
 
@@ -735,7 +786,9 @@ def build_cv_docx(
     - Ensure your template uses those exact placeholders.
     - Ensure your template has the style "Bullet 2" (Avenir Next Regular 10pt).
     """
+    
     doc: DocxDocument = docx.Document(template_path)
+    _flatten_sections_to_one_column(doc)
     _set_page_layout(
         doc,
         left_mm=10,
@@ -768,8 +821,9 @@ def build_cv_docx(
     _replace_placeholder_title(doc, "Experience_title", titles["Experience_title"])
     _replace_placeholder_title(doc, "skills_title", titles["skills_title"])
     _replace_placeholder_title(doc, "language_title", titles["language_title"])
+    _replace_placeholder_title(doc, "Projects_title", titles["projects_title"])
 
-    _replace_placeholder_paragraph(doc, "SUMMARY", _summary_as_paragraph(cv, lang))
+    _replace_placeholder_paragraph(doc, "SUMMARY", _summary_as_paragraph(cv, lang, max_lines=4))
 
     _replace_placeholder_experience_blocks(
         doc,
@@ -783,19 +837,12 @@ def build_cv_docx(
         font_size=FONT_SIZE_BODY,
         job_title_color=COLOR_SUB_TITLE,
     )
-
-    _replace_placeholder_title_hyperlink(
-        doc,
-        "Education_title",
-        text=titles["Education_title"],
-        url="https://drive.google.com/drive/u/0/folders/1XmcnXtTeu-2l4snJg5-pUK7orA7iWxBI",
-    )
+    _replace_placeholder_title(doc, "Education_title", titles["Education_title"])
     _replace_placeholder_bullets(doc, "EDUCATION", _education_lines(cv, lang), bullet_style="Bullet 2")
-
-    skills = skills_ordered or (cv.skills.core + cv.skills.apis + cv.skills.tooling)
-    _replace_placeholder_inline_left(doc, "SKILLS", ", ".join(skills))
-
+    _replace_placeholder_projects_blocks(doc, "PROJECTS", cv, lang)
+    _replace_placeholder_skills_categorized(doc, "SKILLS", cv, lang)
     _replace_placeholder_bullets(doc, "LANGUAGES", _languages_lines(cv, lang), bullet_style="Bullet 2")
+
 
     _set_footer_hyperlink_i18n(
     doc,

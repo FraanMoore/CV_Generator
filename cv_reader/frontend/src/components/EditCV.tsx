@@ -49,6 +49,7 @@ type EditCVData = {
     }>;
     skills: {
         core: string[];
+        backend: string[];
         ui: string[];
         apis: string[];
         tooling: string[];
@@ -56,6 +57,12 @@ type EditCVData = {
     languages: Array<{
         name: string;
         level: string;
+    }>;
+    projects: Array<{
+        name: string;
+        description: string;
+        technologies: string[];
+        link: string;
     }>;
 };
 
@@ -99,6 +106,7 @@ function mapCvMasterToEditData(raw: CVMasterRaw, lang: Lang): EditCVData {
         })),
         skills: {
             core: raw.skills.core,
+            backend: raw.skills.backend ?? [],
             ui: raw.skills.ui ?? [],
             apis: raw.skills.apis,
             tooling: raw.skills.tooling,
@@ -106,6 +114,12 @@ function mapCvMasterToEditData(raw: CVMasterRaw, lang: Lang): EditCVData {
         languages: raw.languages.map(l => ({
             name: l.name,
             level: t(l.level),
+        })),
+        projects: raw.projects.map(p => ({
+            name: t(p.name),
+            description: t(p.description),
+            technologies: p.technologies,
+            link: p.link,
         })),
     };
 }
@@ -142,12 +156,16 @@ const EditCV = ({ onCreate }: EditCVProps) => {
             ],
             skills: {
                 core: [''],
+                backend: [''],
                 ui: [''],
                 apis: [''],
                 tooling: [''],
             },
             languages: [
                 { name: '', level: '' },
+            ],
+            projects: [
+                { name: '', description: '', technologies: [], link: '' },
             ],
         },
     });
@@ -589,6 +607,50 @@ const EditCV = ({ onCreate }: EditCVProps) => {
                                     margin="dense"
                                     id="language-level"
                                     label={t('Language Level')}
+                                    type="text"
+                                    fullWidth
+                                    {...field}
+                                />
+                            )}
+                        />
+                        <Controller
+                            name="projects.0.name"
+                            control={control}
+                            render={({ field }) => (
+                                <TextField
+                                    margin="dense"
+                                    id="project-name"
+                                    label={t('Project Name')}
+                                    type="text"
+                                    fullWidth
+                                    {...field}
+                                />
+                            )}
+                        />
+                        <Controller
+                            name="projects.0.description"
+                            control={control}
+                            render={({ field }) => (
+                                <TextField
+                                    margin="dense"
+                                    id="project-description"
+                                    label={t('Project Description')}
+                                    type="text"
+                                    fullWidth
+                                    multiline
+                                    rows={2}
+                                    {...field}
+                                />
+                            )}
+                        />
+                        <Controller
+                            name="projects.0.link"
+                            control={control}
+                            render={({ field }) => (
+                                <TextField
+                                    margin="dense"
+                                    id="project-link"
+                                    label={t('Project Link')}
                                     type="text"
                                     fullWidth
                                     {...field}

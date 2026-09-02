@@ -48,7 +48,7 @@ def _collect_cv_tech_terms(cv: CVMaster) -> Set[str]:
 
     skills = getattr(cv, "skills", None)
     if skills:
-        for group in ("core", "apis", "tooling"):
+        for group in ("core", "backend", "apis", "tooling"):
             for item in getattr(skills, group, []) or []:
                 terms.update(_extract_tech_terms(str(item)))
                 terms.add(str(item).strip().lower())
@@ -177,7 +177,7 @@ def build_summary_ai(
     skills = getattr(cv, "skills", None)
     all_skills: List[str] = []
     if skills:
-        for group in ("core", "apis", "tooling"):
+        for group in ("core", "backend", "apis", "tooling"):
             all_skills += [str(s) for s in (getattr(skills, group, []) or [])]
 
     user = f"""Language: {lang}

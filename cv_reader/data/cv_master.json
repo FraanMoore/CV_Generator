@@ -163,7 +163,9 @@
               "React Hooks",
               "RTK Query",
               "react-hook-form",
-              "React Router",
+              "React Router"
+             ],
+    "backend": [
               "Python",
               "FastAPI",
               "PostgreSQL",
