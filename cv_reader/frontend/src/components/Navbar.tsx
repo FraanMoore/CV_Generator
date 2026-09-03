@@ -80,7 +80,7 @@ const Navbar = (props: Props) => {
                             {item.type === 'language' ? (
                                 <AppLanguage />
                             ) : (
-                                <ListItemText primary={item.label} />
+                                <ListItemText primary={t(item.label)} />
                             )}
                         </DrawerListItemButton>
                     </ListItem>
@@ -119,7 +119,7 @@ const Navbar = (props: Props) => {
                                     key={item.type}
                                     onClick={item.type === 'new-entry' ? handleOpenNewEntry : handleEditCV}
                                 >
-                                    {item.label}
+                                    {t(item.label)}
                                 </Button>
                             )
                         ))}

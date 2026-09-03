@@ -13,7 +13,7 @@ const AppLanguage = () => {
     };
 
     return (
-        <FormControl size="small">
+        <FormControl size="small" sx={{ margin: "8px" }}>
             <InputLabel id="app-language-select-label">{t("Language")}</InputLabel>
             <Select
                 labelId="app-language-select-label"
