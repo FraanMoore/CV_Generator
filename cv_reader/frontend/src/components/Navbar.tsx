@@ -59,6 +59,10 @@ const Navbar = (props: Props) => {
         setNewEntryOpen(false);
     };
 
+    const handleTitleClick = () => {
+        navigate('/');
+    }; 
+
     const drawer = (
         <DrawerContainer onClick={handleDrawerToggle}>
             <DrawerTitle>
@@ -107,6 +111,7 @@ const Navbar = (props: Props) => {
                     </StyledIconButton>
                     <Title
                         $isMobile={isMobile}
+                        onClick={handleTitleClick}
                     >
                         {t('CV Generator')}
                     </Title>
@@ -148,7 +153,7 @@ export default Navbar;
 
 const DrawerContainer = styled(Box)`
     background-color: var(--color-primary-light);
-    color: var(--color-font-primary);
+    color: var(--primary-600);
     text-align: center;
 `;
 
@@ -185,6 +190,7 @@ const Title = styled(BaseTypography) <{ $isMobile: boolean }>`
     flex-grow: 1;
     display: ${props => (props.$isMobile ? 'none' : 'block')};
     font-size: var(--font-size-h6);
+    color: var(--primary-600);
 `;
 
 const StyledDrawer = styled(Drawer) <{ $isMobile: boolean }>`
